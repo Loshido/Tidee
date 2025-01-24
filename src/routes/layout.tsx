@@ -1,17 +1,30 @@
-import { component$, Slot } from "@builder.io/qwik";
-import type { RequestHandler } from "@builder.io/qwik-city";
+import { component$, type Signal, createContextId, noSerialize, Slot, useContextProvider, useSignal, useVisibleTask$, useTask$, isBrowser } from "@builder.io/qwik";
+import { useNavigate } from "@builder.io/qwik-city";
+import db, { type Connection } from "~/lib/db";
 
-export const onGet: RequestHandler = async ({ cacheControl }) => {
-    // Control caching for this request for best performance and to reduce hosting costs:
-    // https://qwik.dev/docs/caching/
-    cacheControl({
-        // Always serve a cached response by default, up to a week stale
-        staleWhileRevalidate: 60 * 60 * 24 * 7,
-        // Max once every 5 seconds, revalidate on the server to get a fresh version of this page
-        maxAge: 5,
-    });
-};
+export const connectionCtx = createContextId<Signal<Connection>>('connection')
 
 export default component$(() => {
-  return <Slot />;
+    const nav = useNavigate()
+    const database = useSignal<Connection>();
+    useContextProvider(connectionCtx, database);
+
+    useVisibleTask$(async () => {
+        try {
+            const connection = await db();
+            database.value = noSerialize(connection);
+    
+            console.info(`Connection attempt to the database: ${database.value!.status}`)
+    
+            const token = localStorage.getItem('token');
+            if(!token) return;
+            await database.value?.authenticate(token);
+            console.info('Client authentificated')
+        } catch {
+            // Aller sur une page qui explique que la base de données ne fonctionne pas
+            // nav('/')
+        }
+    })
+
+    return <Slot />;
 });
