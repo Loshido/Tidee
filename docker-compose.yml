@@ -1,0 +1,15 @@
+services:
+  surreal:
+    image: surrealdb/surrealdb:latest
+    container_name: surrealdb
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data/db:/data
+    command:
+      - start
+      # - --log=trace
+      - --user=$DB_USER
+      - --pass=$DB_PASS
+      - rocksdb:/data/surreal.db
+    restart: always

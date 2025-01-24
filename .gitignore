@@ -1,0 +1,13 @@
+/dist
+/server
+node_modules
+.env
+
+
+.vscode/*
+!.vscode/launch.json
+!.vscode/*.code-snippets
+
+.idea
+.DS_Store
+data/*

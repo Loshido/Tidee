@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "name": "tidee",
+  "short_name": "Tide",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "Une solution de gestion d'association"
+}
