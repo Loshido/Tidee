@@ -49,5 +49,7 @@
     "vite-tsconfig-paths": "^4.2.1",
     "unstorage": "^1.14.4"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@faker-js/faker": "^9.4.0"
+  }
 }

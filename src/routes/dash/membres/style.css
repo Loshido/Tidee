@@ -1,0 +1,41 @@
+#membres th, #membres td{
+    border-top: 1px solid #0001;
+    padding: 8px 16px;
+}
+
+#membres th{
+    text-align: left;
+}
+
+#membres :is(th, td, tr){
+    transition: background-color .1s ease-in-out;
+}
+#membres tr:hover{
+    background-color: #00000009;
+}
+#membres :is(td, th):hover{
+    background-color: #00909020;
+}
+
+@media (width < 640px) {
+    #membres :is(td, th):nth-child(6),
+    #membres :is(td, th):nth-child(5),
+    #membres :is(td, th):nth-child(1)
+    {
+        display: none;
+    }
+}
+@media (width < 740px) {
+    #membres :is(td, th):nth-child(6),
+    #membres :is(td, th):nth-child(1)
+    {
+        display: none;
+    }
+}
+@media (width < 1024px) {
+    #membres :is(td, th):nth-child(5),
+    #membres :is(td, th):nth-child(6)
+    {
+        display: none;
+    }
+}

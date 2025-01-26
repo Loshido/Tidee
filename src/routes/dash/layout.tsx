@@ -1,4 +1,4 @@
-import { component$, Slot, useSignal } from "@builder.io/qwik";
+import { component$, Slot, useSignal, useTask$, useVisibleTask$ } from "@builder.io/qwik";
 import { Link, LinkProps, useDocumentHead, useLocation } from "@builder.io/qwik-city";
 
 export const NavItem = component$(({ active, ...props}: LinkProps & { active?: boolean }) => <Link {...props}
@@ -15,8 +15,14 @@ export default component$(() => {
     const head = useDocumentHead()
     const loc = useLocation()
 
+    useTask$(({ track }) => {
+        // On ferme le menu lorsque l'on change de page.
+        track(() => loc.url.pathname);
+        menu.value = false;
+    })
+
     return <section 
-        class="w-svw h-svh sm:grid overflow-hidden"
+        class="w-svw h-svh sm:grid overflow-hidden text-gray-700"
         style="grid-template-columns: auto 1fr">
         <div class="sm:hidden p-2 flex flex-row gap-3 border-b items-center">
             <div class="p-2 hover:bg-black hover:bg-opacity-10 rounded
