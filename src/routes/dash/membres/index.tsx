@@ -1,14 +1,9 @@
-import { component$, PropsOf, Slot } from "@builder.io/qwik";
+import { $, component$, PropsOf, Slot, useContext, useStore, useVisibleTask$ } from "@builder.io/qwik";
 import { RecordId } from "surrealdb";
 
-interface Membre {
-    id: RecordId
-    email: string,
-    heures: number,
-    nom: string,
-    poles: RecordId[],
-    prenom: string,
-    promotion: string
+interface Data {
+    promotions: string[],
+    poles: string[]
 }
 
 async function until(exists: () => boolean): Promise<void> {
@@ -31,7 +26,41 @@ export const Cell = component$((props: PropsOf<'div'>) => <div
 import { faker } from "@faker-js/faker";
 import "./style.css"
 import Filtres from "./Filtres";
+import { connectionCtx } from "~/routes/layout";
+import { cache } from "~/lib/local";
 export default component$(() => {
+    const conn = useContext(connectionCtx)
+    const data = useStore<Data>({
+        poles: [],
+        promotions: []
+    })
+
+    useVisibleTask$(async () => {
+        await until(() => !!conn.value);
+
+        const poles = await cache('list-poles', 60 * 24, async () => {
+            const query = "SELECT nom FROM poles;";
+            const response = await conn.value!.query<[{ nom: string }[]]>(query)
+            return response[0].map(o => o.nom)
+        });
+
+        const promotions = await cache('list-promotion', 60 * 24, async () => {
+            const query = "SELECT array::group(promotion) AS promotion FROM membres GROUP ALL";
+            const response = await conn.value!.query<[{ promotion: string[] }[]]>(query);
+            return response[0][0].promotion;
+        })
+
+        data.poles = poles;
+        data.promotions = promotions;
+
+        console.log(poles, promotions)
+    })
+
+    const recherche = $((query: string) => {
+    });
+    const filtres = $((poles: string[], promotions: string[]) => {
+    })
+
     return <div>
         <header class="p-5">
             <h1 class="font-black text-4xl leading-relaxed lg">
@@ -43,11 +72,14 @@ export default component$(() => {
             </p>
         </header>
 
-        <Filtres/>
+        <Filtres
+            promotions={data.promotions}
+            poles={data.poles}
+            recherche={recherche}
+            filtres={filtres}/>
         <table class="mt-4 text-sm w-full" id="membres">
             <thead class="font-semibold *:cursor-pointer select-none">
                 <tr>
-                    <th>Email</th>
                     <th>Nom</th>
                     <th>Prenom</th>
                     <th>Heures</th>
@@ -62,7 +94,6 @@ export default component$(() => {
                             console.log(e)
                         }}
                         key={e}>
-                        <td>{faker.internet.email()}</td>
                         <td>{faker.person.lastName()}</td>
                         <td>{faker.person.firstName()}</td>
                         <td>0h</td>
@@ -72,17 +103,5 @@ export default component$(() => {
                 }
             </tbody>
         </table>
-
-        {/* <ul class="list-inside list-disc ml-2">
-            <li>
-                Filtres par pôle, heures, Nom, Prénom, Email...
-            </li>
-            <li>
-                Trier par pôle, heures, nom, prénom...
-            </li>
-            <li>
-                Possibilité aux responsables de modifier les entrées
-            </li>
-        </ul> */}
     </div>
 })
