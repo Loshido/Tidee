@@ -43,11 +43,11 @@
     "typescript": "5.4.5",
     "undici": "*",
     "vite": "5.3.5",
-    "vite-tsconfig-paths": "^4.2.1"
-  },
-  "dependencies": {
+    "@qwikest/icons": "^0.0.13",
     "simplex-noise": "^4.0.3",
     "surrealdb": "^1.1.0",
+    "vite-tsconfig-paths": "^4.2.1",
     "unstorage": "^1.14.4"
-  }
+  },
+  "dependencies": {}
 }

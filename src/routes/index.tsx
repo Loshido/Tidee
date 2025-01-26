@@ -1,21 +1,67 @@
-import { component$, useContext, useStore } from "@builder.io/qwik";
-import { Form, Link, useNavigate, type DocumentHead } from "@builder.io/qwik-city";
+import { $, component$, Slot, useContext, useStore } from "@builder.io/qwik";
+import { Form, Link, LinkProps, useNavigate, type DocumentHead } from "@builder.io/qwik-city";
 
 import Tide from "~/assets/tide_logo.png?jsx"
 import FlowField from "~/components/utils/FlowField";
-import { connectionCtx } from "./layout";
+import { connectionCtx, notificationsCtx } from "./layout";
+
+export const Lien = component$((props: LinkProps) => <Link {...props}
+    class="text-sm font-light cursor-pointer select-none h-fit w-fit
+        hover:text-black hover:text-opacity-25 transition-colors">
+    <Slot/>
+</Link>)
 
 export default component$(() => {
     const nav = useNavigate()
     const data = useStore({
         email: '',
         pass: '',
-        errors: '',
     })
-    const conn = useContext(connectionCtx);
 
-    return <section class="grid grid-rows-2 md:items-center gap-10 
-        p-5 md:p-10 w-screen h-screen
+    const conn = useContext(connectionCtx);
+    const notifications = useContext(notificationsCtx);
+
+    const submit = $(async () => {
+        if(!conn.value) {
+            notifications.push({
+                contenu: 'La base de données est inaccessible',
+                duration: 5
+            })
+            return
+        }
+
+        if(conn.value.connection?.connection.token) {
+            nav('/dash');
+            return;
+        }
+
+        try {
+            const token = await conn.value.signin({
+                access: 'responsables',
+                variables: {
+                    email: data.email,
+                    password: data.pass
+                }
+            })
+            notifications.push({
+                contenu: 'Identifiants correctes.',
+                duration: 3
+            })
+            localStorage.setItem('token', token);
+            localStorage.setItem('email', data.email);
+            nav('/dash')
+        } catch {
+            notifications.push({
+                contenu: 'Identifiants incorrectes.',
+                style: 'border-red-300 bg-red-200 bg-opacity-10',
+                progress_style: 'bg-red-300 bg-opacity-100',
+                duration: 5
+            })
+        }
+    })
+
+    return <section class="flex md:grid flex-col md:items-center gap-10 
+        p-5 md:p-10 w-svw h-svh
         md:grid-cols-2 md:grid-rows-1">
         <FlowField/> 
         <Form
@@ -32,15 +78,22 @@ export default component$(() => {
             {
                 // Si l'utilisateur a un token de connection.
                 conn.value?.connection?.connection.token
-                ? <div class="flex flex-col gap-1">
-                    <span>
-                        Vous êtes connecté
+                ? <div class="flex flex-col gap-1 border rounded p-3">
+                    <span class="font-semibold">
+                        Vous êtes déjà connecté
                     </span>
-                    <Link class="text-black text-opacity-50 cursor-pointer select-none
-                        hover:text-opacity-75 transition-colors w-fit"
-                        href="/api/deconnexion" prefetch={false}>
-                        déconnexion
-                    </Link>
+                    <Lien onClick$={() => {
+                        if(conn.value && conn.value.connection) {
+                            conn.value.connection.connection.token = undefined;
+                            localStorage.removeItem('token')
+                            localStorage.removeItem('email')
+                        }
+                        nav('/', {
+                            forceReload: true
+                        })
+                    }}>
+                        Déconnexion
+                    </Lien>
                 </div>
                 : <>
                     <label class="relative group">
@@ -73,52 +126,23 @@ export default component$(() => {
                 </>
             }
         
-            <div class="flex flex-row gap-5">
-                <div class="px-2.5 py-1 rounded 
-                    bg-black bg-opacity-5 w-fit hover:bg-blue-500
-                    outline-none text-xl font-bold hover:bg-opacity-25 
-                    transition-colors cursor-pointer select-none h-fit"
-                    onClick$={async () => {
-                        if(!conn.value) {
-                            data.errors = 'Not connected to the database';
-                            return
-                        }
-            
-                        if(conn.value?.connection?.connection.token) {
-                            nav('/dash');
-                            return;
-                        }
-            
-                        try {
-                            const token = await conn.value.signin({
-                                access: 'responsables',
-                                variables: {
-                                    email: data.email,
-                                    password: data.pass
-                                }
-                                
-                            })
-                            localStorage.setItem('token', token);
-                            localStorage.setItem('email', data.email);
-                            nav('/dash')
-                        } catch {
-                            data.errors = 'Identifiants incorrectes.'
-                        }
-            
-                    }}>
-                    Accéder
-                </div>
-                <div class={["p-2 bg-red-300 bg-opacity-50 border-2 border-red-400 rounded", 
-                    data.errors.length > 0 ? 'block' : 'hidden']}>
-                    {
-                        data.errors
-                    }
-                </div>
-                <Link class="text-sm font-light cursor-pointer select-none h-fit w-fit
-                    hover:text-black hover:text-opacity-25 transition-colors"
-                    href="/">
+            <div class="px-2.5 py-1 rounded 
+                bg-black bg-opacity-5 w-fit hover:bg-blue-500
+                outline-none text-xl font-bold hover:bg-opacity-25 
+                transition-colors cursor-pointer select-none h-fit"
+                onClick$={submit}>
+                Accéder
+            </div>
+            <div class="flex flex-col gap-1 p-1">
+                <Lien href="/">
+                    Mots de passe oublié
+                </Lien>
+                <Lien href="https://github.com/Loshido/Tidee/issues/new" target="_blank">
+                    Ouvrir un ticket
+                </Lien>
+                <Lien href="/">
                     Accéder à la documentation
-                </Link>
+                </Lien>
             </div>
         </Form>
     </section>;

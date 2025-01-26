@@ -68,7 +68,7 @@ class FlowField {
             this.draw(n);
         });
         this.compute();
-        this.noiseZ = now * 0.00003;
+        this.noiseZ = now * 0.00005;
         this.clear();
         this.drawField();
     }
@@ -105,7 +105,7 @@ export default component$(() => {
         field.draw(performance.now())
     })
 
-    return <div class="w-full h-full">
+    return <div class="w-full h-1/4 md:h-full">
         <canvas class="w-full h-full" id="flow-field"/>
     </div>
 })
