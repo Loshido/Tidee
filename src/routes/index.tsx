@@ -73,7 +73,7 @@ export default component$(() => {
                 bg-gradient-to-r from-gray-700 via-gray-900 to-black
                 bg-clip-text text-transparent w-fit">
                 <Tide class="w-48 h-48 -mb-12" />
-                Accès à Tide
+                Accès à Tidee
             </h2>
             {
                 // Si l'utilisateur a un token de connection.
@@ -82,16 +82,7 @@ export default component$(() => {
                     <span class="font-semibold">
                         Vous êtes déjà connecté
                     </span>
-                    <Lien onClick$={() => {
-                        if(conn.value && conn.value.connection) {
-                            conn.value.connection.connection.token = undefined;
-                            localStorage.removeItem('token')
-                            localStorage.removeItem('email')
-                        }
-                        nav('/', {
-                            forceReload: true
-                        })
-                    }}>
+                    <Lien href="/deconnexion">
                         Déconnexion
                     </Lien>
                 </div>

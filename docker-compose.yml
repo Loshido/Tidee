@@ -8,7 +8,6 @@ services:
       - ./data/db:/data
     command:
       - start
-      # - --log=trace
       - --user=$DB_USER
       - --pass=$DB_PASS
       - rocksdb:/data/surreal.db

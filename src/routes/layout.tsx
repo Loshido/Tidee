@@ -27,32 +27,34 @@ export default component$(() => {
             notifs_count.value = notifs.length
         } else if(notifs.length > 0) {
             // On initialise une notification
-
-            const id = Math.floor(Math.random() * 999999)
-            notifs.at(-1)!.id = id
-            setTimeout(() => {
-                const i = notifs.findIndex(notif => notif.id === id);
-                notifs.splice(i, 1);
-                notifs_count.value = notifs.length
-            }, 1000 * notifs.at(-1)!.duration)
+            for(let i = 0; i < (notifs.length - notifs_count.value); i++) {
+                const id = Math.floor(Math.random() * 999999)
+                notifs.at(-i - 1)!.id = id
+                setTimeout(() => {
+                    const j = notifs.findIndex(notif => notif.id === id);
+                    notifs.splice(j, 1);
+                    notifs_count.value = notifs.length
+                }, 1000 * notifs.at(-i - 1)!.duration)
+            }
         }
     })
 
+    // eslint-disable-next-line qwik/no-use-visible-task
     useVisibleTask$(async () => {
         try {
             const connection = await db();
             database.value = noSerialize(connection);
-    
-            console.info(`Connection attempt to the database: ${database.value!.status}`)
-    
+
+            console.info("Connexion avec la base de données établit")
+            
             const token = localStorage.getItem('token');
             if(!token && loc.url.pathname.startsWith('/dash')) {
                 nav('/')
                 return;
             } else if(!token) return;
-
+            
             await database.value?.authenticate(token);
-            console.info('Client authentificated')
+            console.info("Client authentifié avec succès")
         } catch {
             if(loc.url.pathname.startsWith('/dash')) {
                 nav('/')
