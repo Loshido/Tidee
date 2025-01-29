@@ -11,3 +11,8 @@
     font-family: "Bluu";
     src: url(/fonts/BluuNext.otf);
 }
+:root{
+    --bg-main: #009090;
+    --bg-main-60: #00909060;
+    --bg-main-20: #00909020;
+}

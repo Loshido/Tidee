@@ -20,7 +20,7 @@ class FlowField {
     simplex: NoiseFunction3D
     constructor() {
         this.simplex = createNoise3D();
-        this.size = 50;
+        this.size = 25;
         this.noiseZ = 0;
 
         const canvas = document.querySelector('#flow-field') as HTMLCanvasElement | null;

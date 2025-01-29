@@ -1,6 +1,7 @@
 import { component$, PropsOf, QRL, Slot, useStore } from "@builder.io/qwik";
 import { LuChevronDown, LuSearch } from "@qwikest/icons/lucide";
 
+// Chacun des filtres
 export const Item = component$((props: PropsOf<'div'>) => <div 
     {...props}
     class={["bg-black bg-opacity-5 flex flex-row gap-2",
@@ -12,9 +13,10 @@ export const Item = component$((props: PropsOf<'div'>) => <div
 
 export const Dropdown = component$((props: PropsOf<'div'>) => <div
     {...props}
+    data-option
     class={[props.class,
         "absolute top-[125%] left-0",
-        "bg-white rounded border",
+        "bg-white rounded border p-1 gap-1",
         "flex flex-col w-max"
     ]}>
     <Slot/>
@@ -22,9 +24,10 @@ export const Dropdown = component$((props: PropsOf<'div'>) => <div
 
 export const Option = component$((props: PropsOf<'div'>) => <div
     {...props}
+    data-option
     class={[props.class,
         "px-3 py-1.5 flex flex-row items-center gap-2",
-        "hover:bg-black hover:bg-opacity-5"
+        "hover:bg-black hover:bg-opacity-5 rounded transition-colors"
     ]}>
     <Slot/>
 </div>)
@@ -75,12 +78,13 @@ export default component$((props: Filtres) => {
                     }, DEBOUNCE_TIME)
                 }}/>
         </Item>
-        <Item>
+        <Item onClick$={(e) => {
+                if((e.target as HTMLElement).hasAttribute('data-option')) return
+                menu.poles = !menu.poles
+                menu.promotions = false
+            }}>
             <div class="flex flex-row gap-2 items-center"
-                onClick$={() => {
-                    menu.poles = !menu.poles
-                    menu.promotions = false
-                }}>
+                >
                 <LuChevronDown class={[
                     "transition-transform duration-300",
                     menu.poles ? 'rotate-180' : ''
@@ -114,12 +118,13 @@ export default component$((props: Filtres) => {
             }
             </Dropdown>
         </Item>
-        <Item>
-        <div class="flex flex-row gap-2 items-center"
-                onClick$={() => {
-                    menu.promotions = !menu.promotions
-                    menu.poles = false
-                }}>
+        <Item 
+            onClick$={(e) => {
+                if((e.target as HTMLElement).hasAttribute('data-option')) return
+                menu.promotions = !menu.promotions
+                menu.poles = false
+            }}>
+            <div class="flex flex-row gap-2 items-center">
                 <LuChevronDown class={[
                     "transition-transform duration-300",
                     menu.promotions ? 'rotate-180' : ''

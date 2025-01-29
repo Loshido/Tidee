@@ -1,15 +1,13 @@
 {
-  "name": "my-qwik-empty-starter",
-  "description": "Blank project with routing included",
+  "name": "tidee",
+  "description": "portable and highly configurable association management platform",
   "engines": {
     "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
   },
-  "engines-annotation": "Mostly required by sharp which needs a Node-API v9 compatible runtime",
   "private": true,
   "trustedDependencies": [
     "sharp"
   ],
-  "trustedDependencies-annotation": "Needed for bun to allow running install scripts",
   "type": "module",
   "scripts": {
     "build": "qwik build",
@@ -50,6 +48,6 @@
     "unstorage": "^1.14.4"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.4.0"
+    "fast-sort": "^3.4.1"
   }
 }

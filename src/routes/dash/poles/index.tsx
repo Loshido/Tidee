@@ -7,6 +7,12 @@ export default component$(() => {
             <li>
                 Fiche de présentation du pôle avec données résumées
             </li>
+            <li>
+                Les responsables du pôle
+            </li>
+            <li>
+                Projets en cours
+            </li>
         </ul>
     </div>
 })

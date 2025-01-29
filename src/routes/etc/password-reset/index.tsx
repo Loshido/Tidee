@@ -8,7 +8,7 @@ export default component$(() => {
         hover:text-black hover:text-opacity-25 transition-colors">
             Revenir en arrière
         </Link>
-        <div class="justify-center items-center h-full flex flex-row">
+        <div class="justify-center items-center h-full flex flex-row gap-12">
             <Cat style={{height: '50vh', width: 'auto'}}/>
             <div>
                 <h1 class="font-semibold text-xl">

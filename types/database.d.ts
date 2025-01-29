@@ -15,7 +15,7 @@ declare global {
         nom: string,
         prenom: string,
         // pass: string, // should be protected by SurrealDB
-        poles: RecordId[],
+        poles: string,
         promotion: string
     }
 }

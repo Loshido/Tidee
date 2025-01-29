@@ -53,14 +53,14 @@ export default component$(() => {
         } catch {
             notifications.push({
                 contenu: 'Identifiants incorrectes.',
-                style: 'border-red-300 bg-red-200 bg-opacity-10',
-                progress_style: 'bg-red-300 bg-opacity-100',
+                style: 'border-red-600 bg-white',
+                progress_style: 'bg-red-600 bg-opacity-100',
                 duration: 5
             })
         }
     })
 
-    return <section class="flex md:grid flex-col md:items-center gap-10 
+    return <section class="flex md:grid flex-col md:items-center gap-2 sm:gap-10 
         p-5 md:p-10 w-svw h-svh
         md:grid-cols-2 md:grid-rows-1">
         <FlowField/> 
@@ -72,7 +72,7 @@ export default component$(() => {
             <h2 class="font-bold text-5xl pt-2 md:pt-4 md:px-2
                 bg-gradient-to-r from-gray-700 via-gray-900 to-black
                 bg-clip-text text-transparent w-fit">
-                <Tide class="w-48 h-48 -mb-12" />
+                <Tide class="w-24 h-24 sm:w-48 sm:h-48 sm:-mb-12" />
                 Accès à Tidee
             </h2>
             {
@@ -125,7 +125,7 @@ export default component$(() => {
                 Accéder
             </div>
             <div class="flex flex-col gap-1 p-1">
-                <Lien href="/">
+                <Lien href="/etc/password-reset/">
                     Mots de passe oublié
                 </Lien>
                 <Lien href="https://github.com/Loshido/Tidee/issues/new" target="_blank">
