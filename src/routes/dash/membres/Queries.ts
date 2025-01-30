@@ -97,8 +97,14 @@ export class SelectQuery {
         this._query = this._default();
     }
 
+    reinitialiser() {
+        this.variables = {};
+        this.poles = []
+        this.promotions = []
+        this.search = ''
+    }
+
     applique(filter: Partial<Filtre>) {
-        console.log("filter", filter);
         let q = this._default();
         if(filter.poles) this.poles = filter.poles;
         if(filter.promotions) this.promotions = filter.promotions;

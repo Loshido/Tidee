@@ -1,4 +1,4 @@
-import { component$, QRL, Slot } from "@builder.io/qwik";
+import { component$, PropsOf, QRL, Slot } from "@builder.io/qwik";
 import { LuChevronDown, LuChevronUp } from "@qwikest/icons/lucide";
 
 type PropsTableau = {
@@ -83,8 +83,8 @@ type Ligne = {
     // id, nom, prenom, heure, pole, promotion
     ligne: [string, string, string, number, string, string]
 };
-export const Ligne = component$(({ ligne }: Ligne) => {
-    return <tr key={ligne[0]}>
+export const Ligne = component$(({ ligne, ...props }: Ligne & PropsOf<'tr'>) => {
+    return <tr {...props} key={ligne[0]}>
         <td>
             {
                 ligne[1]

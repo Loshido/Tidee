@@ -16,3 +16,7 @@
     --bg-main-60: #00909060;
     --bg-main-20: #00909020;
 }
+
+::selection{
+    background-color: var(--bg-main-60);
+}

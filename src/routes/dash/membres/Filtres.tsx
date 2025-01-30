@@ -1,5 +1,5 @@
 import { component$, PropsOf, QRL, Slot, useStore } from "@builder.io/qwik";
-import { LuChevronDown, LuSearch } from "@qwikest/icons/lucide";
+import { LuChevronDown, LuRefreshCcw, LuSearch } from "@qwikest/icons/lucide";
 
 // Chacun des filtres
 export const Item = component$((props: PropsOf<'div'>) => <div 
@@ -157,6 +157,11 @@ export default component$((props: Filtres) => {
                 </Option>)
             }
             </Dropdown>
+        </Item>
+        <Item
+            class="!p-1.5" 
+            onClick$={async () => await props.filtres([], [])}>
+            <LuRefreshCcw/>
         </Item>
     </div>
 })

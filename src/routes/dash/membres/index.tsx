@@ -7,16 +7,18 @@ import { cache } from "~/lib/local";
 import Tableau, { Ligne } from "./Tableau";
 import { LuLoader2 } from "@qwikest/icons/lucide";
 
-import { SerializableMembre, MembreUninstanciator, until } from "./Utils";
+import { SerializableMembre, MembreUninstanciator, until } from "~/components/membres/utils";
 import { selectPoles, selectPromotions, SelectQuery } from "./Queries";
 import sort from "./Sort";
+import Edition from "~/components/membres/Edition";
 
 interface Data {
     promotions: string[],
     poles: string[],
     loading: boolean,
     trie: [string, 'asc' | 'desc'],
-    builder?: NoSerialize<SelectQuery>
+    builder?: NoSerialize<SelectQuery>, // Constructeur de requête SUQL
+    edition?: SerializableMembre // Popup pour modifier un membre
 }
 
 export default component$(() => {
@@ -25,7 +27,7 @@ export default component$(() => {
         trie: ['nom', 'asc'],
         poles: [],
         promotions: [],
-        loading: false
+        loading: false,
     })
     const membres = useStore<SerializableMembre[]>([]);
 
@@ -115,7 +117,7 @@ export default component$(() => {
 
     })
 
-    return <div>
+    return <div class="relative">
         <header id="head-membres" class="p-5">
             <h1 class="font-black text-4xl leading-relaxed lg">
                 Membres
@@ -141,6 +143,9 @@ export default component$(() => {
                 trier={trier}>
                 {
                     membres.map(membre => <Ligne 
+                        onDblClick$={() => {
+                            data.edition = membre;
+                        }}
                         key={membre.id} ligne={[
                         membre.id,
                         membre.nom,
@@ -152,5 +157,8 @@ export default component$(() => {
                 }
             </Tableau>
         }
+        <Edition 
+            exit={$(() => data.edition = undefined)}
+            membre={data.edition} />
     </div>
 })

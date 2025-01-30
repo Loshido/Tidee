@@ -44,7 +44,7 @@ export default component$(() => {
                 }
             })
             notifications.push({
-                contenu: 'Identifiants correctes.',
+                contenu: 'Authentifié(e) pour 4h',
                 duration: 3
             })
             localStorage.setItem('token', token);
