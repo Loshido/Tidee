@@ -1,10 +1,12 @@
-import { component$, PropsOf, QRL, Slot, useStore } from "@builder.io/qwik";
+import { component$, PropsOf, QRL, Slot, useContext, useStore } from "@builder.io/qwik";
 import { type SerializableMembre } from "./utils";
 import { Link } from "@builder.io/qwik-city";
 
 interface EditionProps {
     membre?: SerializableMembre,
-    exit: QRL
+    poles: string[]
+    exit: QRL,
+    update: QRL<(membre: Partial<SerializableMembre>) => Promise<boolean>>
 }
 
 export const TR = component$(() => <tr class="group">
@@ -19,8 +21,10 @@ export const TD = component$((props: PropsOf<'td'>) => <td
     <Slot/>
 </td>)
 import { Dropdown, Option } from "./Filtres";
+import { notificationsCtx } from "~/routes/layout";
 
-export default component$(({ membre, exit }: EditionProps) => {
+export default component$(({ membre, exit, poles, update }: EditionProps) => {
+    const notifications = useContext(notificationsCtx)
     const edition = useStore<Partial<SerializableMembre> & { active: boolean, dropdown: boolean }>({
         active: false,
         dropdown: false
@@ -97,14 +101,35 @@ export default component$(({ membre, exit }: EditionProps) => {
                             edition.dropdown = !edition.dropdown
                         }
                     }}>
-                        {edition.poles ? edition.poles : membre.poles}
+                        <span>
+                            {
+                                edition.poles 
+                                ? edition.poles 
+                                : membre.poles
+                            }
+                        </span>
                         <Dropdown class={edition.dropdown ? '*:select-none' : 'hidden'}>
                         {
-                            ['aa', 'bb', 'cc'].map(pole => <Option 
+                            poles.map(pole => <Option 
                                 key={pole}
-                                class={false ? 'bg-black bg-opacity-15 cursor-pointer' : 'cursor-pointer'}
+                                class={
+                                    edition.poles && edition.poles.includes(pole) ||
+                                    !edition.poles && membre.poles.includes(pole) 
+                                    ? 'bg-black bg-opacity-15 cursor-pointer' 
+                                    : 'cursor-pointer'}
                                 onClick$={() => {
-                                    
+                                    if(!edition.poles) {
+                                        edition.poles = membre.poles;
+                                    }
+
+                                    if (edition.poles.includes(pole)) {
+                                        edition.poles = edition.poles
+                                            .split(', ')
+                                            .filter(p => p !== pole)
+                                            .join(', ');
+                                    } else {
+                                        edition.poles += ', ' + pole
+                                    }
                                 }}>
                                 {
                                     pole
@@ -121,12 +146,47 @@ export default component$(({ membre, exit }: EditionProps) => {
                 ? <div class="grid grid-cols-3 gap-2 my-2 *:text-sm *:cursor-pointer *:select-none">
                     <div class="px-4 py-2 col-span-1 rounded-sm transition-colors
                         bg-gray-200 bg-opacity-50 hover:bg-opacity-100"
-                        onClick$={() => edition.active = false}>
+                        onClick$={() => {
+                            edition.active = false,
+                            edition.dropdown = false,
+
+                            edition.email = undefined
+                            edition.prenom = undefined
+                            edition.nom = undefined
+                            edition.poles = undefined
+                            edition.heures = undefined
+                            edition.promotion = undefined
+                        }}>
                         Annuler
                     </div>
                     <div class="px-4 py-2 col-span-2 transition-colors rounded-sm
                         bg-green-500 bg-opacity-20 hover:bg-opacity-30"
-                        onClick$={() => edition.active = false}>
+                        onClick$={async () => {
+                            
+                            const response = await update({
+                                id: membre.id,
+                                nom: edition.nom,
+                                prenom: edition.prenom,
+                                email: edition.email,
+                                heures: edition.heures,
+                                promotion: edition.promotion,
+                                poles: edition.poles
+                            })
+                            if(response) {
+                                edition.active = false
+                                edition.dropdown = false;
+                                exit()
+                                notifications.push({
+                                    contenu: "Membre mis à jour.",
+                                    duration: 4
+                                })
+                            } else {
+                                notifications.push({
+                                    contenu: "Une erreur est parvenue.",
+                                    duration: 4
+                                })
+                            }
+                        }}>
                         Sauvegarder
                     </div>
                 </div>

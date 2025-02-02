@@ -4,7 +4,7 @@ import { Link, LinkProps, useDocumentHead, useLocation } from "@builder.io/qwik-
 export const NavItem = component$(({ active, ...props}: LinkProps & { active?: boolean }) => <Link {...props}
     class={["flex flex-row gap-2 items-center px-3 py-1.5",
         "hover:bg-black hover:bg-opacity-10 rounded",
-        "cursor-pointer select-none",
+        "cursor-pointer select-none transition-colors",
         active ? 'bg-black bg-opacity-10' : '']}>
     <Slot/>
 </Link>)
@@ -57,7 +57,7 @@ const liens: Lien[] = [
     },
 ]
 
-import { LuAlignLeft, LuCalendarDays, LuLogOut, LuMessageSquare, LuSettings, LuSquareSlash, LuTags, LuUsers } from "@qwikest/icons/lucide"
+import { LuAlignLeft, LuCalendarDays, LuClipboardCheck, LuLogOut, LuMessageSquare, LuSettings, LuSquareSlash, LuTags, LuUsers } from "@qwikest/icons/lucide"
 export default component$(() => {
     const menu = useSignal(false)
     const loc = useLocation()
