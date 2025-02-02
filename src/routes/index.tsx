@@ -48,7 +48,6 @@ export default component$(() => {
                 duration: 3
             })
             localStorage.setItem('token', token);
-            localStorage.setItem('email', data.email);
             nav('/dash')
         } catch {
             notifications.push({

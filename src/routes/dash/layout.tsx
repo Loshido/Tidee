@@ -60,7 +60,6 @@ const liens: Lien[] = [
 import { LuAlignLeft, LuCalendarDays, LuLogOut, LuMessageSquare, LuSettings, LuSquareSlash, LuTags, LuUsers } from "@qwikest/icons/lucide"
 export default component$(() => {
     const menu = useSignal(false)
-    const head = useDocumentHead()
     const loc = useLocation()
 
     useTask$(({ track }) => {
@@ -89,6 +88,7 @@ export default component$(() => {
             <div class="flex flex-col gap-2 sm:gap-1 w-full">
                 {
                     liens.map(lien => <NavItem
+                        key={lien.path}
                         active={loc.url.pathname == lien.path}
                         href={lien.path}>
                         {lien.slot}

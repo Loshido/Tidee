@@ -1,15 +1,15 @@
 import { $, component$, noSerialize, NoSerialize, useContext, useStore, useVisibleTask$ } from "@builder.io/qwik";
 
 import "./style.css"
-import Filtres from "./Filtres";
-import { connectionCtx } from "~/routes/layout";
+import { connectionCtx, permissionsCtx } from "~/routes/layout";
 import { cache } from "~/lib/local";
-import Tableau, { Ligne } from "./Tableau";
+import Tableau, { Ligne } from "~/components/membres/Tableau";
 import { LuLoader2 } from "@qwikest/icons/lucide";
 
+import Filtres from "~/components/membres/Filtres";
 import { SerializableMembre, MembreUninstanciator, until } from "~/components/membres/utils";
-import { selectPoles, selectPromotions, SelectQuery } from "./Queries";
-import sort from "./Sort";
+import { selectPoles, selectPromotions, SelectQuery } from "~/components/membres/Queries";
+import sort from "~/components/membres/Sort";
 import Edition from "~/components/membres/Edition";
 
 interface Data {
@@ -23,6 +23,7 @@ interface Data {
 
 export default component$(() => {
     const conn = useContext(connectionCtx)
+    const permissions = useContext(permissionsCtx)
     const data = useStore<Data>({
         trie: ['nom', 'asc'],
         poles: [],
@@ -56,6 +57,7 @@ export default component$(() => {
         })
 
         membres.push(...cached_membres)
+
 
         data.loading = false;
     })
@@ -128,6 +130,9 @@ export default component$(() => {
             </p>
         </header>
 
+        <Edition 
+            exit={$(() => data.edition = undefined)}
+            membre={data.edition} />
         <Filtres
             promotions={data.promotions}
             poles={data.poles}
@@ -144,21 +149,22 @@ export default component$(() => {
                 {
                     membres.map(membre => <Ligne 
                         onDblClick$={() => {
-                            data.edition = membre;
+                            if(permissions.includes('gerer_membres')) {
+                                data.edition = membre;
+                            }
                         }}
-                        key={membre.id} ligne={[
-                        membre.id,
-                        membre.nom,
-                        membre.prenom,
-                        membre.heures,
-                        membre.poles,
-                        membre.promotion
-                    ]}/>)
+                        key={membre.id} 
+                        ligne={[
+                            membre.id,
+                            membre.nom,
+                            membre.prenom,
+                            membre.heures,
+                            membre.poles,
+                            membre.promotion
+                        ]}
+                    />)
                 }
             </Tableau>
         }
-        <Edition 
-            exit={$(() => data.edition = undefined)}
-            membre={data.edition} />
     </div>
 })

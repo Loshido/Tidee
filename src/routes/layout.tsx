@@ -3,19 +3,23 @@ import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import db, { type Connection } from "~/lib/db";
 
 import Notifications, { type Notification } from "~/components/utils/Notifications";
+import { RecordId } from "surrealdb";
 export const connectionCtx = createContextId<Signal<Connection>>('connection')
 export const notificationsCtx = createContextId<Notification[]>('notifications')
+export const permissionsCtx = createContextId<string[]>('permissions')
 
 export default component$(() => {
     const loc = useLocation()
     const nav = useNavigate()
     const database = useSignal<Connection>();
+    const permissionsStore = useStore<string[]>([])
 
     const notifs_count = useSignal(0)
     const notifs = useStore<Notification[]>([]);
 
     useContextProvider(connectionCtx, database);
     useContextProvider(notificationsCtx, notifs);
+    useContextProvider(permissionsCtx, permissionsStore);
 
     useTask$(({ track }) => {
         // On execute cette fonction à chaque fois 
@@ -53,9 +57,15 @@ export default component$(() => {
                 return;
             } else if(!token) return;
             
-            await database.value?.authenticate(token);
-            console.info("Client authentifié avec succès")
+            await database.value!.authenticate(token);
+
+            // Chargement des permissions de l'utilisateur
+            const perms = await database.value!.query<[RecordId[]]>("fn::permissions($session.rd)");
+            permissionsStore.push(...perms[0].map(perm => perm.id.toString()))
+
+            console.info("Authentifié avec succès")
         } catch {
+            console.error("Authentification échoué")
             if(loc.url.pathname.startsWith('/dash')) {
                 nav('/')
             }

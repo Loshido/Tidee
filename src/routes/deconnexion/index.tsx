@@ -12,7 +12,6 @@ export default component$(() => {
             conn.value.connection.connection.token = undefined;
         }
         localStorage.removeItem('token')
-        localStorage.removeItem('email')
         nav('/', {
             forceReload: true
         })

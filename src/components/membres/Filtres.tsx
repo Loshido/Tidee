@@ -160,7 +160,7 @@ export default component$((props: Filtres) => {
         </Item>
         <Item
             class="!p-1.5" 
-            onClick$={async () => await props.filtres([], [])}>
+            onClick$={async () => {await props.filtres([], [])}}>
             <LuRefreshCcw/>
         </Item>
     </div>
