@@ -1,4 +1,4 @@
-import { component$, PropsOf, QRL, Slot } from "@builder.io/qwik";
+import { component$, type PropsOf, type QRL, Slot } from "@builder.io/qwik";
 import { LuChevronDown, LuChevronUp } from "@qwikest/icons/lucide";
 
 type PropsTableau = {

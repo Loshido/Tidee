@@ -1,4 +1,4 @@
-import { component$, PropsOf, QRL, Slot, useStore } from "@builder.io/qwik";
+import { component$, type PropsOf, type QRL, Slot, useStore } from "@builder.io/qwik";
 import { LuChevronDown, LuRefreshCcw, LuSearch } from "@qwikest/icons/lucide";
 
 // Chacun des filtres

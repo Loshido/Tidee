@@ -1,5 +1,5 @@
 import { component$, useVisibleTask$ } from "@builder.io/qwik";
-import { createNoise3D, NoiseFunction3D } from "simplex-noise";
+import { createNoise3D, type NoiseFunction3D } from "simplex-noise";
 
 class FlowField {
     // element html qui contient le dessin.

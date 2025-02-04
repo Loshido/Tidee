@@ -1,4 +1,4 @@
-import { component$, PropsOf, QRL, Slot, useContext, useStore } from "@builder.io/qwik";
+import { component$, type PropsOf, type QRL, Slot, useContext, useStore } from "@builder.io/qwik";
 import { type SerializableMembre } from "./utils";
 import { Link } from "@builder.io/qwik-city";
 

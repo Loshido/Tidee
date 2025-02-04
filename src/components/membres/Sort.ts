@@ -38,4 +38,4 @@ export default function<T>(array: T[], order: 'asc' | 'desc', check: (t: T) => a
     };
 
     return partitioning(array);
-};
+}

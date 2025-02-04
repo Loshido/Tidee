@@ -1,18 +1,39 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, useContext, useStore, useVisibleTask$ } from "@builder.io/qwik";
+import { until } from "~/components/membres/utils";
+
+import Pole, { type PoleProps } from "~/components/poles/Pole";
+import { cache } from "~/lib/local";
+import { connectionCtx } from "~/routes/layout";
+
+const QUERY = `
+SELECT nom, meta.boutons as boutons, meta.description as description, 
+meta.style as style, meta.images as images 
+FROM poles;`;
 
 export default component$(() => {
-    return <div class="p-5">
-        /poles
-        <ul class="list-inside list-disc ml-2">
-            <li>
-                Fiche de présentation du pôle avec données résumées
-            </li>
-            <li>
-                Les responsables du pôle
-            </li>
-            <li>
-                Projets en cours
-            </li>
-        </ul>
-    </div>
+    const conn = useContext(connectionCtx);
+    const poles = useStore<PoleProps[]>([])
+
+    useVisibleTask$(async () => {
+        await until(() => !!conn.value);
+
+        const data = await cache('poles', 60 * 4, async () => {
+            const response = await conn.value!.query<[PoleProps[]]>(QUERY);
+
+            return response[0]
+        })
+
+        poles.push(...data);
+    })
+
+    return <section class="h-full w-full overflow-x-auto snap-x snap-mandatory flex flex-row">
+        {
+            poles.map(pole => <Pole
+                key={pole.nom} 
+                nom={pole.nom}
+                description={pole.description}
+                boutons={pole.boutons}
+                style={pole.style}/>)
+        }
+    </section>
 })

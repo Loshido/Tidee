@@ -1,5 +1,5 @@
 import { $, component$, Slot, useContext, useStore } from "@builder.io/qwik";
-import { Form, Link, LinkProps, useNavigate, type DocumentHead } from "@builder.io/qwik-city";
+import { Form, Link, type LinkProps, useNavigate, type DocumentHead } from "@builder.io/qwik-city";
 
 import Tide from "~/assets/tide_logo.png?jsx"
 import FlowField from "~/components/utils/FlowField";

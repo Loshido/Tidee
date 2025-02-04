@@ -5,7 +5,7 @@ export type SerializableMembre = Omit<Membre, 'pass' | 'id'> & {
 export const MembreUninstanciator = (m: Omit<Membre, 'pass'>): SerializableMembre => {
     return {
         ...m,
-        id: m.id ? m.id.id.toString() : ''
+        id: m.id.id.toString()
     }
 }
 

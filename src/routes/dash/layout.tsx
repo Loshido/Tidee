@@ -1,5 +1,5 @@
-import { component$, JSXOutput, Slot, useSignal, useTask$, useVisibleTask$ } from "@builder.io/qwik";
-import { Link, LinkProps, useDocumentHead, useLocation } from "@builder.io/qwik-city";
+import { component$, type JSXOutput, Slot, useSignal, useTask$ } from "@builder.io/qwik";
+import { Link, type LinkProps, useLocation } from "@builder.io/qwik-city";
 
 export const NavItem = component$(({ active, ...props}: LinkProps & { active?: boolean }) => <Link {...props}
     class={["flex flex-row gap-2 items-center px-3 py-1.5",
@@ -57,7 +57,7 @@ const liens: Lien[] = [
     },
 ]
 
-import { LuAlignLeft, LuCalendarDays, LuClipboardCheck, LuLogOut, LuMessageSquare, LuSettings, LuSquareSlash, LuTags, LuUsers } from "@qwikest/icons/lucide"
+import { LuAlignLeft, LuCalendarDays, LuLogOut, LuMessageSquare, LuSettings, LuSquareSlash, LuTags, LuUsers } from "@qwikest/icons/lucide"
 export default component$(() => {
     const menu = useSignal(false)
     const loc = useLocation()
@@ -69,7 +69,7 @@ export default component$(() => {
     })
 
     return <section 
-        class="w-svw h-svh sm:grid overflow-hidden text-gray-700"
+        class="w-svw h-svh sm:grid overflow-hidden"
         style="grid-template-columns: auto 1fr">
         <div class="sm:hidden p-2 flex flex-row gap-3 border-b items-center">
             <div class="p-2 hover:bg-black hover:bg-opacity-10 rounded

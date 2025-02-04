@@ -1,9 +1,9 @@
-import { component$, type Signal, createContextId, noSerialize, Slot, useContextProvider, useSignal, useVisibleTask$, useTask$, isBrowser, useStore } from "@builder.io/qwik";
+import { component$, type Signal, createContextId, noSerialize, Slot, useContextProvider, useSignal, useVisibleTask$, useTask$, useStore } from "@builder.io/qwik";
 import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import db, { type Connection } from "~/lib/db";
 
 import Notifications, { type Notification } from "~/components/utils/Notifications";
-import { RecordId } from "surrealdb";
+import type { RecordId } from "surrealdb";
 export const connectionCtx = createContextId<Signal<Connection>>('connection')
 export const notificationsCtx = createContextId<Notification[]>('notifications')
 export const permissionsCtx = createContextId<string[]>('permissions')

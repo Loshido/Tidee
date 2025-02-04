@@ -1,10 +1,30 @@
+import { LinkProps } from "@builder.io/qwik-city";
 import { RecordId } from "surrealdb";
 declare global {
     type Pole = {
         id: RecordId,
         nom: string,
         poles: RecordId[]
-        responsables: RecordId[]   
+        responsables: RecordId[],
+        meta: {
+            images?: {
+                // De cette façon, on peut afficher une image pour chaque appareil
+                // media-query: image-url
+                [key: string]: string,
+
+                // L'image servie par défaut
+                default: string
+            },
+            // description (rendu en html)
+            description: string,
+            // on pourra utiliser .pole-container-[nom du pole en minuscule]
+            // pour toucher le conteneur de la page du pôle
+            style?: string,
+
+            boutons: (
+                LinkProps & { slot: string}
+            )[]
+        }
     }
     
     type Membre = {
@@ -18,6 +38,7 @@ declare global {
         poles: string,
         promotion: string
     }
+
     
     interface Session {
         ac: string,

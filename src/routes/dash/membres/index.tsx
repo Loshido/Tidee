@@ -1,4 +1,4 @@
-import { $, component$, noSerialize, NoSerialize, useContext, useStore, useVisibleTask$ } from "@builder.io/qwik";
+import { $, component$, noSerialize, type NoSerialize, useContext, useStore, useVisibleTask$ } from "@builder.io/qwik";
 
 import "./style.css"
 import { connectionCtx, permissionsCtx } from "~/routes/layout";
@@ -7,7 +7,7 @@ import Tableau, { Ligne } from "~/components/membres/Tableau";
 import { LuLoader2 } from "@qwikest/icons/lucide";
 
 import Filtres from "~/components/membres/Filtres";
-import { SerializableMembre, MembreUninstanciator, until } from "~/components/membres/utils";
+import { type SerializableMembre, MembreUninstanciator, until } from "~/components/membres/utils";
 import { selectPoles, selectPromotions, SelectQuery } from "~/components/membres/Queries";
 import sort from "~/components/membres/Sort";
 import Edition from "~/components/membres/Edition";
@@ -190,7 +190,7 @@ export default component$(() => {
 
     return <div class="relative">
         <header id="head-membres" class="p-5">
-            <h1 class="font-black text-4xl leading-relaxed lg">
+            <h1 class="font-black text-5xl leading-relaxed">
                 Membres
             </h1>
             <p class="text-lg font-light">

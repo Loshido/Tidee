@@ -126,7 +126,6 @@ export class SelectQuery {
         search?: string
     }] {
         const query = this._query + ' ORDER BY nom;'
-        console.log(query)
         return [query, this.variables];
     }
 }
