@@ -1,13 +1,22 @@
-import { component$, useContext, useStore, useVisibleTask$ } from "@builder.io/qwik";
+import { component$, useContext, useSignal, useStore, useVisibleTask$ } from "@builder.io/qwik";
 import { until } from "~/components/membres/utils";
 
 import Pole, { type PoleProps } from "~/components/poles/Pole";
 import { cache } from "~/lib/local";
 import { connectionCtx } from "~/routes/layout";
 
-const QUERY = `
-SELECT nom, meta.boutons as boutons, meta.description as description, 
-meta.style as style, meta.images as images 
+const QUERY = `SELECT 
+    nom, 
+    meta.boutons as boutons, 
+    meta.description as description, 
+    meta.style as style, 
+    meta.images as images,
+    (
+        SELECT COUNT(heures) AS nb, math::mean(heures) AS heures 
+        FROM membres 
+        WHERE $parent.id INSIDE poles
+        GROUP ALL
+    ) AS membres
 FROM poles;`;
 
 export default component$(() => {
@@ -33,7 +42,9 @@ export default component$(() => {
                 nom={pole.nom}
                 description={pole.description}
                 boutons={pole.boutons}
-                style={pole.style}/>)
+                style={pole.style}
+                images={pole.images}
+                membres={pole.membres}/>)
         }
     </section>
 })

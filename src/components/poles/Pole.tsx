@@ -1,5 +1,7 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, useContext, type PropsOf } from "@builder.io/qwik";
 import { Link, type LinkProps } from "@builder.io/qwik-city";
+import { LuClock, LuPencil, LuUsers } from "@qwikest/icons/lucide";
+import { permissionsCtx } from "~/routes/layout";
 
 export interface PoleProps {
     // Nom affiché du pôle (sera mis en majuscule)
@@ -12,36 +14,44 @@ export interface PoleProps {
         // Boutons pour des sites externes
         LinkProps & { nom: string}
     )[],
-    image?: {
-        // media-query: image-url
-        [key: string]: string,
-        default: string
-
-        // De cette façon, on peut afficher une image pour chaque appareil
-    }
+    images?: string[],
+    membres: [{
+        heures: number,
+        nb: number
+    }]
 }
 
-export default component$((p: PoleProps) => {
+
+export default component$((p: PoleProps & PropsOf<'div'>) => {
+    const permissions = useContext(permissionsCtx)
     
-    return <div class={[
+    return <div {...p} id={'pole-' + p.nom} class={[
         "snap-center w-full h-full p-8 sm:p-24",
         "flex flex-col gap-2 sm:gap-8 flex-none relative",
         "pole-container-" + p.nom.toLowerCase(),
-        "pole-container", p.image ? 'bg-transparent' : 'bg-black'
+        "pole-container", p.images ? 'bg-transparent' : 'bg-black'
         ]}>
         {
-            p.style && <style>
-                {
-                    p.style
-                }
-            </style>
+            p.style && <style dangerouslySetInnerHTML={p.style}/>
         }
-        <h1 class="text-white text-6xl sm:text-8xl font-black uppercase">
+        <h1 class="text-white text-4xl sm:text-6xl md:text-8xl font-black uppercase">
             { p.nom }
         </h1>
         <p 
-            class="text-white text-opacity-50 font-light text-lg sm:text-xl sm:w-3/5" 
+            class="text-white text-opacity-50 font-light text-lg sm:text-xl sm:w-4/5 md:w-3/5" 
             dangerouslySetInnerHTML={p.description}/>
+        <div class="flex flex-row items-center gap-5 flex-wrap text-white">
+            <div class="flex flex-row gap-3 items-center flex-wrap"
+                title="Nombre de membres">
+                <LuUsers/>
+                { p.membres[0].nb }
+            </div>
+            <div class="flex flex-row gap-3 items-center flex-wrap"
+                title="Nombre d'heures par membre en moyenne">
+                <LuClock/>
+                { Math.ceil(p.membres[0].heures) }h
+            </div>
+        </div>
         <div class="flex flex-row items-center gap-4 flex-wrap">
             <Link class="bg-white px-3 py-1 text-xl font-semibold uppercase 
                 select-none cursor-pointer hover:bg-opacity-75 transition-colors">
@@ -61,20 +71,30 @@ export default component$((p: PoleProps) => {
             }
         </div>
         {
-            p.image && <picture
+            p.images && <picture
                 class="-z-10 absolute top-0 left-0 w-full h-full object-cover">
                     {
-                        Object
-                            .keys(p.image)
-                            .filter(k => k !== 'default')
-                            .map(media => <source
-                                key={media}
-                                media={media}
-                                // @ts-ignore
-                                src={p.image[media]}/>)
+                        p.images
+                            .map(img => img.split(':'))
+                            .map(([media, url]) => 
+                                media === 'default'
+                                ? <img key={media} 
+                                        src={url} alt="Bannière pôle" 
+                                        class="w-full h-full" loading="lazy" />
+                                : <source key={media}
+                                        media={media}
+                                        srcset={url}/>
+                                )
                     }
-                    <img src={p.image['default']} alt="Bannière pôle" class="w-full h-full" loading="lazy" />
-            </picture>
+                </picture>
+        }
+        {
+            permissions.includes('modifier_pole_' + p.nom.toLowerCase()) && <Link 
+                href={`/dash/poles/${p.nom.toLowerCase()}`}
+                class="absolute p-3 right-6 bottom-6 text-white hover:bg-white hover:bg-opacity-10 
+                    cursor-pointer transition-colors rounded">
+                <LuPencil/>
+            </Link>
         }
     </div>
 })
