@@ -1,5 +1,5 @@
 import { component$, type JSXOutput, Slot, useSignal, useTask$ } from "@builder.io/qwik";
-import { Link, type LinkProps, useLocation } from "@builder.io/qwik-city";
+import { Link, type LinkProps, useDocumentHead, useLocation } from "@builder.io/qwik-city";
 
 export const NavItem = component$(({ active, ...props}: LinkProps & { active?: boolean }) => <Link {...props}
     class={["flex flex-row gap-2 items-center px-3 py-1.5",
@@ -61,12 +61,17 @@ import { LuAlignLeft, LuCalendarDays, LuLogOut, LuMessageSquare, LuSettings, LuS
 export default component$(() => {
     const menu = useSignal(false)
     const loc = useLocation()
+    const head = useDocumentHead()
 
     useTask$(({ track }) => {
         // On ferme le menu lorsque l'on change de page.
         track(() => loc.url.pathname);
         menu.value = false;
     })
+
+    if(head.frontmatter.dash == false) {
+        return <Slot/>
+    }
 
     return <section 
         class="w-svw h-svh sm:grid overflow-hidden"

@@ -10,7 +10,15 @@ export const MembreUninstanciator = (m: Omit<Membre, 'pass'>): SerializableMembr
 }
 
 // Attends jusqu'à ce que la condition soit validée
-export async function until(exists: () => boolean, interval: number = 100): Promise<void> {
+export async function until(exists: () => boolean, interval: number = 100, timeout?: number, timeoutCb?: () => void): Promise<void> {
+    if(timeout && timeoutCb) {
+        setTimeout(() => {
+            if(!exists()) {
+                timeoutCb()
+            }
+        }, timeout);
+    }
+    
     await new Promise((resolve) => {
         const intervalId = setInterval(() => {
             if(exists()) {

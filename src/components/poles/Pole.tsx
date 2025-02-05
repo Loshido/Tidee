@@ -1,5 +1,5 @@
 import { component$, useContext, type PropsOf } from "@builder.io/qwik";
-import { Link, type LinkProps } from "@builder.io/qwik-city";
+import { Link, useLocation, type LinkProps } from "@builder.io/qwik-city";
 import { LuClock, LuPencil, LuUsers } from "@qwikest/icons/lucide";
 import { permissionsCtx } from "~/routes/layout";
 
@@ -23,13 +23,15 @@ export interface PoleProps {
 
 
 export default component$((p: PoleProps & PropsOf<'div'>) => {
+    const loc = useLocation()
     const permissions = useContext(permissionsCtx)
     
     return <div {...p} id={'pole-' + p.nom} class={[
         "snap-center w-full h-full p-8 sm:p-24",
         "flex flex-col gap-2 sm:gap-8 flex-none relative",
         "pole-container-" + p.nom.toLowerCase(),
-        "pole-container", p.images ? 'bg-transparent' : 'bg-black'
+        "pole-container", p.images ? 'bg-transparent' : 'bg-black',
+        p.class && p.class
         ]}>
         {
             p.style && <style dangerouslySetInnerHTML={p.style}/>
@@ -40,7 +42,7 @@ export default component$((p: PoleProps & PropsOf<'div'>) => {
         <p 
             class="text-white text-opacity-50 font-light text-lg sm:text-xl sm:w-4/5 md:w-3/5" 
             dangerouslySetInnerHTML={p.description}/>
-        <div class="flex flex-row items-center gap-5 flex-wrap text-white">
+        <div class="stats flex flex-row items-center gap-5 flex-wrap text-white">
             <div class="flex flex-row gap-3 items-center flex-wrap"
                 title="Nombre de membres">
                 <LuUsers/>
@@ -52,7 +54,7 @@ export default component$((p: PoleProps & PropsOf<'div'>) => {
                 { Math.ceil(p.membres[0].heures) }h
             </div>
         </div>
-        <div class="flex flex-row items-center gap-4 flex-wrap">
+        <div class="btn flex flex-row items-center gap-4 flex-wrap">
             <Link class="bg-white px-3 py-1 text-xl font-semibold uppercase 
                 select-none cursor-pointer hover:bg-opacity-75 transition-colors">
                 Rejoindre
@@ -89,8 +91,10 @@ export default component$((p: PoleProps & PropsOf<'div'>) => {
                 </picture>
         }
         {
-            permissions.includes('modifier_pole_' + p.nom.toLowerCase()) && <Link 
-                href={`/dash/poles/${p.nom.toLowerCase()}`}
+            loc.url.pathname == '/dash/poles/' 
+            && permissions.includes('modifier_pole_' + p.nom.toLowerCase()) 
+            && <Link 
+                href={`/dash/poles/${p.nom}`}
                 class="absolute p-3 right-6 bottom-6 text-white hover:bg-white hover:bg-opacity-10 
                     cursor-pointer transition-colors rounded">
                 <LuPencil/>
