@@ -1,10 +1,14 @@
-import { $, component$, PropsOf, useContext, useStore, useVisibleTask$ } from "@builder.io/qwik";
+import { $, component$, useContext, useStore, useTask$, useVisibleTask$ } from "@builder.io/qwik";
 import { DocumentHead, Link, useLocation, useNavigate } from "@builder.io/qwik-city";
-import { LuArrowDownToLine, LuArrowLeft, LuUndo2 } from "@qwikest/icons/lucide";
+import { LuArrowDownToLine, LuArrowLeft, LuDelete, LuUndo2 } from "@qwikest/icons/lucide";
 import { until } from "~/components/membres/utils";
 import Pole, { PoleProps } from "~/components/poles/Pole";
 import storage, { cache } from "~/lib/local";
 import { connectionCtx, permissionsCtx } from "~/routes/layout";
+import Desc from "./Desc";
+import Style from "./Style";
+import Boutons from "./Boutons";
+import Images from "./Images";
 
 const QUERY = `SELECT 
     nom, 
@@ -34,7 +38,8 @@ export default component$(() => {
             }
         );
 
-        if(!permissions.includes('modifier_pole_' + loc.params.pole.toLowerCase())) {
+        if(!permissions.includes('modifier_pole_' + loc.params.pole.toLowerCase())
+            && !permissions.includes('modifier_poles')) {
             nav('/dash/poles')
             return;
         }
@@ -78,103 +83,111 @@ export default component$(() => {
                 contentEditable="true"
                 id="title"
                 onInput$={(_, t) => store.pole!.nom = t.innerText}/>
-            <div>
-                <code class="italic text-black text-opacity-25">
-                    style.css
-                </code>
-                <pre
-                    id="css"
-                    onInput$={(e, t) => {
-                        e.preventDefault()
-                        store.pole!.style = t.innerText
-                    } }
-                    onKeyDown$={(e, t) => {
-                        if(e.key === "Tab") {
-                            e.preventDefault()
-                            // it simulates a tabulation 
-                            // (but the cursor goes at the beginning...)
-                            // const style = store.pole!.style;
-                            // const s = e.view?.getSelection()
-                            // if(!s || !s.anchorNode?.nodeValue) return
-
-                            // const anchor = s.anchorNode;
-                            // const offset = s.anchorOffset;
-
-                            // if(!anchor.nodeValue) return;
-                            // const i = style.indexOf(anchor.nodeValue) + offset;
-
-                            // if(i >= 0 && i < style.length) {
-                            //     store.pole!.style = style.slice(0, i) + '    ' + style.slice(i)
-                            // }
-                        }
-                    }}
-                    contentEditable="true" 
-                    class="border p-4 outline-none my-2 overflow-scroll text-xs sm:text-base"/>
-            </div>
-            <div>
-                <code class="italic text-black text-opacity-25">
-                    description.html
-                </code>
-                <pre
-                    id="html"
-                    onInput$={(_, t) => store.pole!.description = t.innerText}
-                    contentEditable="true" 
-                    onKeyDown$={(e, t) => {
-                        if(e.key === "Tab") e.preventDefault()
-                    }}
-                    class="border p-4 outline-none my-2 overflow-scroll text-xs sm:text-base"/>
-            </div>
-            <div>
-                <code class="italic text-black text-opacity-25">
-                    boutons
-                </code>
-                <div class="grid grid-cols-5 *:border *:px-3 *:py-2 my-2 text-xs sm:text-base lg:w-3/4">
-                    <div class="col-span-2 font-semibold">
-                        Nom
-                    </div>
-                    <div class="col-span-3 font-semibold">
-                        URL <code class="hidden sm:inline text-sm">[...&lt;attribute&gt;:&lt;value&gt;]</code>
-                        <br/>
-                        <span class="text-xs font-light hidden md:block">
-                            (ex: <code>
-                                https://google.com target:_blank style:'color:blue;text-decoration:unset'
-                            </code>)
-                        </span>
-                    </div>
-                    {
-                        store.pole?.boutons.map((bouton, i) => <>
-                            <input class="col-span-2 outline-none" type="text"
-                                value={bouton.nom}
-                                onInput$={(_, t) => {
-                                    bouton.nom = t.value;
-                                }}/>
-                            <input class="col-span-2 outline-none" type="text"
-                                // à finir
-                                value={bouton.href}
-                                onInput$={(_, t) => {
-                                    bouton.href = t.value;
-                                }}/>
-                            <div class="select-none cursor-pointer transition-colors h-full flex items-center
-                                hover:bg-opacity-5 hover:bg-black font-light text-sm"
-                                onClick$={() => {
-                                    store.pole!.boutons.splice(i, 1)
-                                }}>
-                                supprimer
-                            </div>
-                        </>)
-                    }
-                    <div class="col-span-5 select-none cursor-pointer 
-                        hover:bg-opacity-5 hover:bg-black transition-colors"
-                        onClick$={() => {
-                            store.pole!.boutons.push({
-                                nom: '',
-                                href: ''
-                            })
-                        }}>
-                        Ajouter une ligne
-                    </div>
+            <Style id="css"
+                onInput$={(e, t) => {
+                    e.preventDefault()
+                    store.pole!.style = t.innerText
+                } }
+                onKeyDown$={(e, t) => {
+                    if(e.key === "Tab") e.preventDefault()
+                }}/>
+            <Desc id="html"
+                onInput$={(_, t) => store.pole!.description = t.innerText}
+                onKeyDown$={(e, t) => {
+                    if(e.key === "Tab") e.preventDefault()
+                }}/>
+            <Boutons>
+                {
+                    store.pole?.boutons.map((bouton, i) => <>
+                        <input class="col-span-2 outline-none" type="text"
+                            value={bouton.nom}
+                            onInput$={(_, t) => {
+                                bouton.nom = t.value;
+                            }}/>
+                        <input class="col-span-3 outline-none" type="text"
+                            value={bouton.href}
+                            onInput$={(_, t) => {
+                                bouton.href = t.value;
+                            }}/>
+                        <div class="select-none cursor-pointer transition-colors h-full
+                            flex flex-row items-center gap-1
+                            hover:bg-opacity-5 hover:bg-black font-light text-sm"
+                            onClick$={() => {
+                                store.pole!.boutons.splice(i, 1)
+                            }}>
+                            <LuDelete/>
+                            supprimer
+                        </div>
+                    </>)
+                }
+                <div class="col-span-6 select-none cursor-pointer 
+                    hover:bg-opacity-5 hover:bg-black transition-colors"
+                    onClick$={() => {
+                        store.pole!.boutons.push({
+                            nom: '',
+                            href: ''
+                        })
+                    }}>
+                    Ajouter une ligne
                 </div>
-            </div>
+            </Boutons>
+            <Images>
+                {
+                    store.pole?.images
+                    .map(img => {
+                        const [query, ...url] = img.split(':')
+                        return [query, url.join(':')]
+                    })
+                    .map(([query, url], i) => query === 'default'
+                    ? <>
+                        <div class="px-3 py-2 border col-span-3">
+                            default
+                        </div>
+                        <input type="text" class="px-3 py-2 border outline-none col-span-4"
+                            value={url}
+                            onInput$={(_, t) =>{
+                                store.pole!.images[i] = `default:${t.value}`
+                            }}/>
+                    </>
+                    : <>
+                        <input class="border outline-none w-full px-3 py-2  col-span-3" 
+                            type="text"
+                            value={query}
+                            onInput$={(_, t) => {
+                                store.pole!.images[i] = `${t.value}:${url}`
+                            }}/>
+                        <input type="text" class="px-3 py-2 border outline-none w-full col-span-3"
+                            value={url}
+                            onInput$={(_, t) => {
+                                store.pole!.images[i] = `${query}:${t.value}`
+                            }}/>
+                        <div class="px-3 py-2 flex flex-row gap-2 select-none cursor-pointer items-center
+                            transition-colors hover:bg-opacity-5 hover:bg-black font-light text-sm"
+                            onClick$={() => {
+                                store.pole!.images.splice(i, 1)
+                            }}>
+                            <LuDelete/>
+                            supprimer
+                        </div>
+                    </>) 
+                }
+                <div class="col-span-7 select-none cursor-pointer 
+                    hover:bg-opacity-5 hover:bg-black transition-colors"
+                    onClick$={() => {
+                        store.pole!.images.push(':');
+                        store.pole!.images.sort((a, b) => {
+                            const [tailleA] = a.split(':');
+                            const [tailleB] = b.split(':');
+                            console.log(tailleA, tailleB)
+                            if(a.startsWith('default')) return 1;
+                            else if(b.startsWith('default')) return -1;
+                            else if(parseInt(tailleA) < parseInt(tailleB)) return -1;
+                            return 1
+                        })
+                    }}>
+                    Ajouter une image
+                </div>
+            </Images>
             <div class="flex flex-row items-center gap-4">
                 <div class="px-3 py-1 select-none cursor-pointer 
                     bg-emerald-700 text-white

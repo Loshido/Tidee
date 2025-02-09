@@ -65,7 +65,7 @@ export default component$((p: PoleProps & PropsOf<'div'>) => {
             </Link>
             {
                 p.boutons.map(({ nom, ...props }) => <Link {...props} 
-                    key={nom}
+                    key={nom} target="_blank"
                     class="bg-white px-3 py-1 text-xl font-semibold uppercase 
                     select-none cursor-pointer hover:bg-opacity-75 transition-colors">
                     { nom }
@@ -77,14 +77,17 @@ export default component$((p: PoleProps & PropsOf<'div'>) => {
                 class="-z-10 absolute top-0 left-0 w-full h-full object-cover">
                     {
                         p.images
-                            .map(img => img.split(':'))
+                            .map(img => {
+                                const [query, ...url] = img.split(':');
+                                return [query, url.join(':')]
+                            })
                             .map(([media, url]) => 
                                 media === 'default'
                                 ? <img key={media} 
                                         src={url} alt="Bannière pôle" 
                                         class="w-full h-full" loading="lazy" />
                                 : <source key={media}
-                                        media={media}
+                                        media={`(width < ${media}px)`}
                                         srcset={url}/>
                                 )
                     }
@@ -92,7 +95,9 @@ export default component$((p: PoleProps & PropsOf<'div'>) => {
         }
         {
             loc.url.pathname == '/dash/poles/' 
-            && permissions.includes('modifier_pole_' + p.nom.toLowerCase()) 
+            && (
+                permissions.includes('modifier_pole_' + p.nom.toLowerCase()) 
+                || permissions.includes('modifier_poles'))
             && <Link 
                 href={`/dash/poles/${p.nom}`}
                 class="absolute p-3 right-6 bottom-6 text-white hover:bg-white hover:bg-opacity-10 
