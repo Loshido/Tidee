@@ -264,7 +264,7 @@ export default component$(() => {
 })
 
 export const head: DocumentHead = (e) => ({
-    title: 'Tidee - ' + e.params.pole,
+    title: 'Tidee - Edition ' + e.params.pole,
     frontmatter: {
         dash: false
     }

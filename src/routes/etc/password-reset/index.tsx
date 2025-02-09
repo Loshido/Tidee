@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { DocumentHead, Link } from "@builder.io/qwik-city";
 
 import Cat from "~/assets/cat.png?jsx"
 export default component$(() => {
@@ -27,3 +27,7 @@ export default component$(() => {
         </div>
     </section>
 })
+
+export const head: DocumentHead = {
+    title: "Tidee - Mots de passe oublié",
+};

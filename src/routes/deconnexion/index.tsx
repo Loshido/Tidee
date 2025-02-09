@@ -18,7 +18,7 @@ export default component$(() => {
     })
 
     return <>
-        <span class="animate-pulse">
+        <span class="animate-pulse text-xs p-5">
             Déconnexion...
         </span>
     </>

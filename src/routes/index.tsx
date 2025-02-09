@@ -1,4 +1,4 @@
-import { $, component$, Slot, useContext, useStore } from "@builder.io/qwik";
+import { $, component$, PropsOf, Slot, useContext, useStore } from "@builder.io/qwik";
 import { Form, Link, type LinkProps, useNavigate, type DocumentHead } from "@builder.io/qwik-city";
 
 import Tide from "~/assets/tide_logo.png?jsx"
@@ -11,6 +11,21 @@ export const Lien = component$((props: LinkProps) => <Link {...props}
     <Slot/>
 </Link>)
 
+export const Entree = component$(({active, text, ...props}: { active: boolean, text: string } & PropsOf<'input'>) => <label 
+    class="relative group">
+    <span class={["absolute transition-all",
+        active
+        ? 'top-2 left-4 text-lg font-light' 
+        : '-top-3 left-3 text-sm font-medium',
+        "group-focus-within:-top-3 group-focus-within:left-3 group-focus-within:text-sm",
+        "group-focus-within:font-medium cursor-text"]}>
+       { text }
+    </span>
+    <input class={["px-4 py-2 rounded bg-black bg-opacity-5 w-fit",
+        "outline-none text-lg", props.class && props.class]}
+        {...props}  />
+</label>)
+
 export default component$(() => {
     const nav = useNavigate()
     const data = useStore({
@@ -21,21 +36,25 @@ export default component$(() => {
     const conn = useContext(connectionCtx);
     const notifications = useContext(notificationsCtx);
 
+    // QRL executé lorsqu'on tente d'envoier le formulaire
     const submit = $(async () => {
         if(!conn.value) {
+            // On écarte les cas qui nous intéressent pas.
             notifications.push({
                 contenu: 'La base de données est inaccessible',
                 duration: 5
             })
-            return
+            return;
         }
 
+        // <=> déjà connecté
         if(conn.value.connection?.connection.token) {
             nav('/dash');
             return;
         }
 
         try {
+            // produit une erreur lorsque l'authentification échoue
             const token = await conn.value.signin({
                 access: 'responsables',
                 variables: {
@@ -44,9 +63,10 @@ export default component$(() => {
                 }
             })
             notifications.push({
-                contenu: 'Authentifié(e) pour 4h',
+                contenu: 'Connecté(e) pour 4h',
                 duration: 3
             })
+            // On stocke le token pour pouvoir le réutiliser dans les 4h
             localStorage.setItem('token', token);
             nav('/dash')
         } catch {
@@ -86,33 +106,13 @@ export default component$(() => {
                     </Lien>
                 </div>
                 : <>
-                    <label class="relative group">
-                        <span class={["absolute transition-all",
-                            data.email.length === 0 
-                            ? 'top-2 left-4 text-lg font-light' 
-                            : '-top-3 left-3 text-sm font-medium',
-                            "group-focus-within:-top-3 group-focus-within:left-3 group-focus-within:text-sm",
-                            "group-focus-within:font-medium cursor-text"]}>
-                            Adresse email
-                        </span>
-                        <input onInput$={(_, t) => data.email = t.value}
-                            name="email" type="email" class="px-4 py-2 rounded bg-black bg-opacity-5 w-fit 
-                            outline-none text-lg" />
-                    </label>
-                    <label class="relative group">
-                        <span class={["absolute transition-all",
-                        data.pass.length === 0 
-                        ? 'top-2 left-4 text-lg font-light' 
-                        : '-top-3 left-3 text-sm font-medium',
-                        "group-focus-within:-top-3 group-focus-within:left-3 group-focus-within:text-sm",
-                        "group-focus-within:font-medium cursor-text"]}>
-                            Mots de passe
-                        </span>
-                        <input class="px-4 py-2 rounded bg-black bg-opacity-5 w-fit 
-                            outline-none text-lg"
-                            onInput$={(_, t) => data.pass = t.value} 
-                            name="password" type="password"  />
-                    </label>
+                    <Entree
+                        active={data.email.length === 0}
+                        onInput$={(_, t) => data.email = t.value}
+                        name="email" type="email" text="Adresse email"/>
+                    <Entree active={data.pass.length === 0}
+                        text="Mots de passe" onInput$={(_, t) => data.pass = t.value} 
+                        name="password" type="password" />
                 </>
             }
         

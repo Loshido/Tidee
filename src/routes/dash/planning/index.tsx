@@ -1,4 +1,5 @@
 import { component$ } from "@builder.io/qwik";
+import { DocumentHead } from "@builder.io/qwik-city";
 
 export default component$(() => {
     return <div class="p-5">
@@ -22,3 +23,7 @@ export default component$(() => {
         </ul>
     </div>
 })
+
+export const head: DocumentHead = {
+    title: "Tidee - Planning"
+};

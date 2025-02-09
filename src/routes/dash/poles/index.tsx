@@ -1,4 +1,5 @@
 import { component$, useContext, useSignal, useStore, useVisibleTask$ } from "@builder.io/qwik";
+import { DocumentHead } from "@builder.io/qwik-city";
 import { until } from "~/components/membres/utils";
 
 import Pole, { type PoleProps } from "~/components/poles/Pole";
@@ -48,3 +49,7 @@ export default component$(() => {
         }
     </section>
 })
+
+export const head: DocumentHead = {
+    title: "Tidee - Pôles"
+};

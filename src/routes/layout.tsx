@@ -1,11 +1,23 @@
 import { component$, type Signal, createContextId, noSerialize, Slot, useContextProvider, useSignal, useVisibleTask$, useTask$, useStore } from "@builder.io/qwik";
 import { useLocation, useNavigate } from "@builder.io/qwik-city";
-import db, { type Connection } from "~/lib/db";
 
 import Notifications, { type Notification } from "~/components/utils/Notifications";
+import db, { type Connection } from "~/lib/db";
 import type { RecordId } from "surrealdb";
-export const connectionCtx = createContextId<Signal<Connection>>('connection')
+
+// On permet aux membres enfants d'utiliser ces signaux / stores
+// ça permet d'avoir un état syncroniser dans toute l'application
+/////////////////////
+
+// L'interface avec la base de données
+export const connectionCtx = createContextId<Signal<Connection>>('connection') 
+
+// Permet d'ajouter des notifications
 export const notificationsCtx = createContextId<Notification[]>('notifications')
+
+// Permet d'accéder aux permissions de l'utilisateur.
+// Pas de panique! Même si l'utilisateur parvient à changer les permissions côté client, 
+// les actions non-autorisées seront refusées par la base de données.
 export const permissionsCtx = createContextId<string[]>('permissions')
 
 export default component$(() => {
@@ -43,23 +55,27 @@ export default component$(() => {
         }
     })
 
-    // eslint-disable-next-line qwik/no-use-visible-task
     useVisibleTask$(async () => {
+        // On essaye de connecter le client pour pas qu'il n'est à se connecter manuellement.
         try {
             const connection = await db();
+            // Impossible de serialiser la class Surreal
             database.value = noSerialize(connection);
 
             console.info("Connexion avec la base de données établit")
             
+            // Le jeton qui sert à l'utilisateur de s'authentifier
             const token = localStorage.getItem('token');
             if(!token && loc.url.pathname.startsWith('/dash')) {
-                nav('/')
+                nav('/') // On veut pas qu'un utilisant sans jeton se trouve dans une partie restreinte
                 return;
             } else if(!token) return;
             
+            // On authentifie un client avec jeton
             await database.value!.authenticate(token);
 
             // Chargement des permissions de l'utilisateur
+            // $session.rd fait référence à l'id de l'utilisateur (rd: RecordId)
             const perms = await database.value!.query<[RecordId[]]>("fn::permissions($session.rd)");
             permissionsStore.push(...perms[0].map(perm => perm.id.toString()))
 

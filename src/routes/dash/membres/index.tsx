@@ -12,6 +12,7 @@ import { selectPoles, selectPromotions, SelectQuery } from "~/components/membres
 import sort from "~/components/membres/Sort";
 import Edition from "~/components/membres/Edition";
 import { RecordId } from "surrealdb";
+import { DocumentHead } from "@builder.io/qwik-city";
 
 interface Data {
     promotions: string[],
@@ -239,3 +240,7 @@ export default component$(() => {
         }
     </div>
 })
+
+export const head: DocumentHead = {
+    title: "Tidee - Membres"
+};
