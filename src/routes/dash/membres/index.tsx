@@ -1,4 +1,5 @@
 import { $, component$, noSerialize, type NoSerialize, useContext, useStore, useVisibleTask$ } from "@builder.io/qwik";
+import type { DocumentHead } from "@builder.io/qwik-city";
 
 import "./style.css"
 import { connectionCtx, permissionsCtx } from "~/routes/layout";
@@ -12,7 +13,6 @@ import { selectPoles, selectPromotions, SelectQuery } from "~/components/membres
 import sort from "~/components/membres/Sort";
 import Edition from "~/components/membres/Edition";
 import { RecordId } from "surrealdb";
-import { DocumentHead } from "@builder.io/qwik-city";
 
 interface Data {
     promotions: string[],

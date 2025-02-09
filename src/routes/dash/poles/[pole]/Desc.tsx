@@ -1,4 +1,4 @@
-import { component$, PropsOf, Slot } from "@builder.io/qwik";
+import { component$, type PropsOf } from "@builder.io/qwik";
 
 export default component$((props: PropsOf<'pre'>) => <div>
     <code class="italic text-black text-opacity-25">

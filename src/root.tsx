@@ -24,7 +24,7 @@ export default component$(() => {
         {!isDev && (
           <link
             rel="manifest"
-            href={`${import.meta.env.BASE_URL}manifest.json`}
+            href="/manifest.json"
           />
         )}
         <RouterHead />

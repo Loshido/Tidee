@@ -78,8 +78,8 @@ export default component$((p: PoleProps & PropsOf<'div'>) => {
                     {
                         p.images
                             .map(img => {
-                                const [query, ...url] = img.split(':');
-                                return [query, url.join(':')]
+                                const [query, ...url] = img.split(':')
+                                return [query, url.join(':')]
                             })
                             .map(([media, url]) => 
                                 media === 'default'

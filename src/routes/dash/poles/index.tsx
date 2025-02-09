@@ -1,5 +1,5 @@
-import { component$, useContext, useSignal, useStore, useVisibleTask$ } from "@builder.io/qwik";
-import { DocumentHead } from "@builder.io/qwik-city";
+import { component$, useContext, useStore, useVisibleTask$ } from "@builder.io/qwik";
+import type { DocumentHead } from "@builder.io/qwik-city";
 import { until } from "~/components/membres/utils";
 
 import Pole, { type PoleProps } from "~/components/poles/Pole";

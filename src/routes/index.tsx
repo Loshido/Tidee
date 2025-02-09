@@ -1,10 +1,10 @@
-import { $, component$, PropsOf, Slot, useContext, useStore } from "@builder.io/qwik";
+import { $, component$, type PropsOf, Slot, useContext, useStore } from "@builder.io/qwik";
 import { Form, Link, type LinkProps, useNavigate, type DocumentHead } from "@builder.io/qwik-city";
 
 import Tide from "~/assets/tide_logo.png?jsx"
 import FlowField from "~/components/utils/FlowField";
 import { connectionCtx, notificationsCtx, permissionsCtx } from "./layout";
-import { RecordId } from "surrealdb";
+import type { RecordId } from "surrealdb";
 
 export const Lien = component$((props: LinkProps) => <Link {...props}
     class="text-sm font-light cursor-pointer select-none h-fit w-fit

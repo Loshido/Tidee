@@ -1,8 +1,8 @@
-import { $, component$, useContext, useStore, useTask$, useVisibleTask$ } from "@builder.io/qwik";
-import { DocumentHead, Link, useLocation, useNavigate } from "@builder.io/qwik-city";
+import { component$, useContext, useStore, useVisibleTask$ } from "@builder.io/qwik";
+import { type DocumentHead, Link, useLocation, useNavigate } from "@builder.io/qwik-city";
 import { LuArrowDownToLine, LuArrowLeft, LuDelete, LuUndo2 } from "@qwikest/icons/lucide";
 import { until } from "~/components/membres/utils";
-import Pole, { PoleProps } from "~/components/poles/Pole";
+import Pole, { type PoleProps } from "~/components/poles/Pole";
 import storage, { cache } from "~/lib/local";
 import { connectionCtx, permissionsCtx } from "~/routes/layout";
 import Desc from "./Desc";
@@ -88,12 +88,12 @@ export default component$(() => {
                     e.preventDefault()
                     store.pole!.style = t.innerText
                 } }
-                onKeyDown$={(e, t) => {
+                onKeyDown$={e => {
                     if(e.key === "Tab") e.preventDefault()
                 }}/>
             <Desc id="html"
                 onInput$={(_, t) => store.pole!.description = t.innerText}
-                onKeyDown$={(e, t) => {
+                onKeyDown$={e => {
                     if(e.key === "Tab") e.preventDefault()
                 }}/>
             <Boutons>
@@ -195,7 +195,7 @@ export default component$(() => {
                     w-fit flex flex-row items-center gap-2"
                     onClick$={async () => {
                         if(!store.pole || !conn.value) return;
-                        await conn.value?.query(`
+                        await conn.value.query(`
                             UPDATE poles 
                             SET nom = $nom, 
                                 meta.style = $style, 
