@@ -3,7 +3,8 @@ import { Form, Link, type LinkProps, useNavigate, type DocumentHead } from "@bui
 
 import Tide from "~/assets/tide_logo.png?jsx"
 import FlowField from "~/components/utils/FlowField";
-import { connectionCtx, notificationsCtx } from "./layout";
+import { connectionCtx, notificationsCtx, permissionsCtx } from "./layout";
+import { RecordId } from "surrealdb";
 
 export const Lien = component$((props: LinkProps) => <Link {...props}
     class="text-sm font-light cursor-pointer select-none h-fit w-fit
@@ -34,6 +35,7 @@ export default component$(() => {
     })
 
     const conn = useContext(connectionCtx);
+    const permissions = useContext(permissionsCtx)
     const notifications = useContext(notificationsCtx);
 
     // QRL executé lorsqu'on tente d'envoier le formulaire
@@ -56,12 +58,19 @@ export default component$(() => {
         try {
             // produit une erreur lorsque l'authentification échoue
             const token = await conn.value.signin({
-                access: 'responsables',
+                access: 'membres', // responsables
                 variables: {
                     email: data.email,
                     password: data.pass
                 }
             })
+            // Chargement des permissions de l'utilisateur
+            // $session.rd fait référence à l'id de l'utilisateur (rd: RecordId)
+            permissions.splice(0, permissions.length)
+            const perms = await conn.value!.query<[RecordId[]]>("fn::permissions($session.rd)");
+            console.log(perms)
+            permissions.push(...perms[0].map(perm => perm.id.toString()))
+
             notifications.push({
                 contenu: 'Connecté(e) pour 4h',
                 duration: 3

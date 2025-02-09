@@ -76,12 +76,16 @@ export default component$(() => {
 
             // Chargement des permissions de l'utilisateur
             // $session.rd fait référence à l'id de l'utilisateur (rd: RecordId)
+            permissionsStore.splice(0, permissionsStore.length)
             const perms = await database.value!.query<[RecordId[]]>("fn::permissions($session.rd)");
             permissionsStore.push(...perms[0].map(perm => perm.id.toString()))
 
             console.info("Authentifié avec succès")
         } catch {
             console.error("Authentification échoué")
+            if(database.value && database.value.connection?.connection.token) {
+                database.value.connection.connection.token = undefined
+            }
             if(loc.url.pathname.startsWith('/dash')) {
                 nav('/')
             }
