@@ -1,0 +1,20 @@
+.graphique{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.graphique .ligne{
+    display: grid;
+    gap: 5px;
+    grid-template-columns: 1fr repeat(var(--colonnes), 20px);
+    align-items: center;
+    
+    font-size: 0.75rem;
+    line-height: 1rem;
+}
+.graphique .point{
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}

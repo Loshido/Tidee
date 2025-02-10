@@ -13,7 +13,7 @@ type Lien = {
     path: string,
     slot: JSXOutput,
     name?: string,
-    permissions?: string[]
+    permissions?: string[] // permissions requises pour aller à un page
 }
 const liens: Lien[] = [
     {
@@ -59,7 +59,7 @@ const liens: Lien[] = [
         </>,
         name: 'Notifications',
         permissions: [
-            'notifications_envoyer'
+            'notifications'
         ]
     },
 ]
@@ -125,7 +125,9 @@ export default component$(() => {
                 }
                 {
                     // Si l'utilisateur est responsable d'un pôle
-                    permissions.some(permission => permission.startsWith('modifier_pole_')) &&  <NavItem 
+                    permissions.some(permission => 
+                        permission.startsWith('modifier_pole_') 
+                        || permission === 'modifier_poles') &&  <NavItem 
                         active={loc.url.pathname == '/dash/appels/'} href="/dash/appels/">
                         <LuClipboardCheck class="w-5 h-5 sm:w-4 sm:h-4"/>
                         Appel
