@@ -37,7 +37,7 @@ export default component$(() => {
     useVisibleTask$(async () => {
         // Un constructeur de query pour simplifier les filtres.
         data.builder = noSerialize(new SelectQuery(
-            "id, email, heures, nom, prenom, array::join(array::map(poles, |$v| $v.nom), ', ') AS poles, promotion", 'membres'))
+            "id, email, heures, nom, prenom, array::map(poles, |$v| $v.nom) AS poles, promotion", 'membres'))
         data.loading = true;
         // On attends que la connexion avec base de données soit établit.
         await until(() => !!conn.value);
@@ -118,7 +118,6 @@ export default component$(() => {
             membres.splice(0, membres.length);
             membres.push(...sorted);
         }, 300)
-
     })
 
     const update = $(async (membre: Partial<SerializableMembre>) => {
@@ -131,7 +130,7 @@ export default component$(() => {
         let poles: RecordId[] | undefined = undefined
         if(membre.poles && membre.poles.length > 0 ) {
             const response = await conn.value!.query<[{ id: RecordId }[]]>('SELECT id FROM poles WHERE nom INSIDE $noms', {
-                noms: membre.poles.split(', ')
+                noms: membre.poles
             })
             
             poles = response[0].map(a => a.id)
@@ -231,7 +230,7 @@ export default component$(() => {
                             membre.nom,
                             membre.prenom,
                             membre.heures,
-                            membre.poles,
+                            membre.poles.join(', '),
                             membre.promotion
                         ]}
                     />)

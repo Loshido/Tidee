@@ -1,0 +1,54 @@
+.ligne{
+    border-top: 1px solid #0001;
+
+    display: grid;
+    grid-template-columns: 200px 200px 100px 40px 40px;
+}
+
+@media (width < 800px) {
+    .ligne{
+        grid-template-columns: 150px 150px 75px 40px 40px;
+    }
+}
+@media (width < 640px) {
+    .ligne:not(.tete) {
+        align-items: center;
+    }
+    .ligne{
+        font-size: .7rem;
+        grid-template-columns: 100px 75px 75px 40px 40px;
+    }
+    .ligne > * {
+        padding: 4px 8px;
+    }
+}
+
+.ligne > *{
+    padding: 8px 16px;
+    transition: background-color .15s ease-in-out;
+}
+
+.ligne.tete > *:has(+ *),
+:has(+ .cube), .cube {
+    border-right: 1px solid #0001;
+} 
+
+.ligne .cube,
+.ligne.tete > *{
+    cursor: pointer;
+    user-select: none;
+}
+
+.ligne .cube{
+    width: 40px;
+    height: 40px;
+
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.ligne .cube:hover,
+.ligne.tete > *:hover {
+    background-color: #0001;
+}

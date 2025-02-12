@@ -35,7 +35,7 @@ declare global {
         nom: string,
         prenom: string,
         // pass: string, // should be protected by SurrealDB
-        poles: string,
+        poles: string[],
         promotion: string
     }
 
