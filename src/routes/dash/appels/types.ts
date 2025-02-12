@@ -11,7 +11,9 @@ export interface AppelState {
     }[],
     date: Date,
     trie: Colonnes | null,
-    trie_direction: 'asc' | 'desc'
+    trie_direction: 'asc' | 'desc',
+    synced: boolean,
+    last_sent: number
 }
 
 export type Pole = {

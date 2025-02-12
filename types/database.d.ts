@@ -39,6 +39,12 @@ declare global {
         promotion: string
     }
 
+    type AppelData = {
+        id: RecordId,
+        heures: number,
+        before: number
+    }
+
     
     interface Session {
         ac: string,

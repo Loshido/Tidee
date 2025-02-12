@@ -1,11 +1,11 @@
 // Qwik & Qwik City
-import { $, component$, Slot, useContext, useStore, useTask$, useVisibleTask$ } from "@builder.io/qwik";
+import { $, component$, isBrowser, useContext, useStore, useTask$, useVisibleTask$ } from "@builder.io/qwik";
 import { useNavigate, type DocumentHead } from "@builder.io/qwik-city";
 
 // Utilitaires
 import { SelectQuery } from "~/components/membres/Queries";
 import { MembreUninstanciator, until } from "~/components/membres/utils";
-import { cache } from "~/lib/local";
+import storage, { cache } from "~/lib/local";
 // Contextes
 import { connectionCtx, notificationsCtx, permissionsCtx } from "~/routes/layout";
 // Fonction de trie
@@ -18,11 +18,12 @@ import type { AppelState, Colonnes, MembreAppel } from "./types";
 // Composants
 //////////////////////////
 // Icones
-import { LuChevronDown, LuChevronUp, LuTag } from "@qwikest/icons/lucide";
+import { LuArrowDownToLine, LuSend, LuTag } from "@qwikest/icons/lucide";
 // Selecteur
 import Select from "~/components/select";
 // Composants de la page
 import { Entete, Ligne } from "./composants";
+import { RecordId } from "surrealdb";
 
 export default component$(() => {
     const conn = useContext(connectionCtx);
@@ -35,7 +36,9 @@ export default component$(() => {
         poles: [],
         date: new Date(),
         trie: 'nom',
-        trie_direction: 'asc'
+        trie_direction: 'asc',
+        synced: false,
+        last_sent: 0
     })
 
     // Change le pôle pour lequel on fait l'appel;
@@ -65,19 +68,119 @@ export default component$(() => {
         }),
         retirer: $((id: string) => {
             const i = membres.findIndex(m => m.id === id)
-            if(i >= 0 && membres[i].heures_sup > -8) {
+            if(i >= 0 && membres[i].heures_sup > -8 && membres[i].heures + membres[i].heures_sup > 0) {
                 membres[i].heures_sup -= 1
             }
         })
     }
 
-    // Tâche côté serveur
+    const send = $(async () => {
+        if(!state.pole || state.last_sent + 1000 * 5 > Date.now()) return;
+        state.last_sent = Date.now() // évite que les utilisateurs spamment le bouton.
+        const heures: AppelData[] = [];
+
+        membres
+            .filter(m => state.pole && m.poles.includes(state.pole) && m.heures_sup !== 0)
+            .forEach(m => {
+                if(m.heures_sup > 8 || -8 > m.heures_sup) return;
+                heures.push({
+                    heures: m.heures_sup,
+                    id: new RecordId('membres', m.id),
+                    before: m.heures
+                });
+            });
+
+        const date = state.date.toLocaleDateString('fr-FR', {
+            dateStyle: 'short'
+        });
+
+        const p = state.poles.find(p => p.nom === state.pole)
+        if(!p) return;
+
+        const pole = new RecordId('poles', p.id)
+        const response = await conn.value!.query<[null, unknown[], null]>(
+            // 1. On retire les heures ajoutés avant (s'il y en avait par précaution)
+            // 2. On mets à jours l'appel
+            // 3. On applique la mise à jours des heures
+            `
+            FOR $ligne IN 
+                (SELECT VALUE heures FROM appels WHERE date = '10/02/2025' AND pole = poles:serveur) {
+                FOR $h IN $ligne {
+                    UPDATE $h.id SET heures = $h.before;
+                };
+            };
+            UPSERT appels CONTENT {
+                date: $date,
+                heures: $heures,
+                pole: $pole,
+                responsable: $session.rd
+            };
+            FOR $h IN $heures {
+                UPDATE $h.id SET heures = $h.before + $h.heures
+            };
+            `, 
+            {
+                date,
+                pole,
+                heures
+            }   
+        );
+        state.synced = response[1].length > 0;
+        notifications.push({
+            duration: 5,
+            contenu: `Vous avez fait l'appel du ${date} pour ${heures.length} membres.`
+        })
+
+        // we remove the current cache since it is not reliable. 
+        localStorage.removeItem('.:list-membre')
+    })
+
+    // Tâche côté serveur ou pas
     useTask$(() => {
         // Toutes les appels d'une semaine seront stockés au premier jour de la semaine,
         // pour réduire les logs
         const d = Date.now() - (new Date().getDay() - 1) * 24 * 60 * 60 * 1000
         const date = new Date(d);
         state.date = date;
+    })
+
+    // On syncronise avec une appel potentiellement déjà faite.
+    useTask$(async ({ track }) => {
+        track(() => state.pole);
+        if(!isBrowser) return;
+
+        // L'identifiant de la semaine (ex: 10/02/2025)
+        const date = state.date.toLocaleDateString('fr-FR', {
+            dateStyle: 'short'
+        })
+        // On forme le RecordId du pole en question s'il est dispo
+        const p = state.poles.find(p => p.nom === state.pole)
+        if(!p) return;
+
+        const pole = new RecordId('poles', p.id)
+        
+        const [[heures]] = await conn.value!.query<[[AppelData[]?]]>(
+            `SELECT VALUE heures FROM appels WHERE date = $date AND pole = $pole`,
+            {
+                date,
+                pole
+            }
+        )
+        state.synced = false;
+        if(!heures) return; 
+        state.synced = heures.length > 0
+
+        // On transforme la liste en object pour avoir un accès O(1)
+        // ça évite de faire une boucle dans une boucle et se retrouver à O(n^2)
+        const o: { [key: string]: number } = {}
+        heures.forEach(h => o[h.id.id.toString()] = h.heures)
+
+        membres.forEach(m => {
+            if(m.id in o) {
+                m.heures -= o[m.id]
+                m.heures_sup = o[m.id]
+            };
+        })
     })
 
     // On traque si les paramètres du trie changent
@@ -118,10 +221,6 @@ export default component$(() => {
             nom: pole.nom
         })))
 
-        if(state.poles.length === 1 ) {
-            selectPole(state.poles[0].id);
-        }
-
         // Un constructeur de query pour simplifier les filtres.
         const builder = new SelectQuery(
             `id, email, heures, nom, prenom, 
@@ -145,6 +244,10 @@ export default component$(() => {
             ...m,
             heures_sup: 0
         })))
+
+        if(state.poles.length === 1 ) {
+            await selectPole(state.poles[0].id);
+        }
     })
 
     return <section>
@@ -162,7 +265,7 @@ export default component$(() => {
         </div>
         {
             state.pole
-            ? <div class="w-full flex flex-col gap-0">
+            ? <div class="appel w-full flex flex-col gap-0">
                 <div class="ligne tete font-semibold">
                     <Entete
                         trie={{
@@ -214,6 +317,7 @@ export default component$(() => {
                     membres
                         .filter(m => state.pole && m.poles.includes(state.pole || ''))
                         .map(membre => <Ligne
+                            key={membre.id}
                             membre={membre}
                             plus={heures_sup.ajouter}
                             minus={heures_sup.retirer}
@@ -225,6 +329,27 @@ export default component$(() => {
                 Vous devez choisir le pôle pour lequel vous voulez faire l'appel!
             </div>
         }
+        <div class="p-5 sm:p-10
+            flex flex-row flex-wrap gap-x-2 items-center">
+            {
+                state.pole && <div class="px-2 py-1 border rounded flex flex-row gap-2 items-center 
+                hover:bg-black hover:bg-opacity-5 transition-colors cursor-pointer select-none"
+                onClick$={send}>
+                    {
+                        state.synced 
+                        ? <>
+                            <LuArrowDownToLine class="w-4 h-4"/>
+                            Enregistrer
+                        </> 
+                        : <>
+                            <LuSend class="w-4 h-4"/>
+                            Envoyer
+                        </>
+                    }
+                </div>
+            }
+            
+        </div>
     </section>
 })
 
