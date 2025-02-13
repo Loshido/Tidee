@@ -46,7 +46,7 @@ declare global {
     }
 
     
-    interface Session {
+    type Session {
         ac: string,
         db: string,
         exp: unknown,

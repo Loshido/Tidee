@@ -12,3 +12,4 @@ node_modules
 .DS_Store
 data/*
 public/img/**/*.png
+tmp/tsconfig.tsbuildinfo

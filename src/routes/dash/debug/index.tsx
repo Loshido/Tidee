@@ -9,13 +9,18 @@ export default component$(() => {
 
     useVisibleTask$(async () => {
         await until(() => !!conn.value);
-        console.time('fetching debug data')
         
         data.push('// permissions\n' + JSON.stringify(permissions, undefined, 4))
         
-        const session = await conn.value!.query('$session;')
+        const session = await conn.value!.query<[Session]>('$session;')
         data.push('// $session\n' + JSON.stringify(session[0], undefined, 4));
-        console.timeEnd('fetching debug data')
+
+        const membre = await conn.value!.query('SELECT * FROM $membre', {
+            membre: session[0].rd
+        })
+
+        // @ts-ignore
+        data.push(`// ${session[0].rd?.toString()}\n` + JSON.stringify(membre[0][0], undefined, 4))
     })
 
     return <section class="p-5 flex flex-col sm:flex-row flex-wrap gap-2 text-xs">

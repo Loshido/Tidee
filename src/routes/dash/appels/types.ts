@@ -1,6 +1,6 @@
-import { QRL } from "@builder.io/qwik"
-import { RecordId } from "surrealdb"
-import { SerializableMembre } from "~/components/membres/utils"
+import type { QRL } from "@builder.io/qwik"
+import type { RecordId } from "surrealdb"
+import type { SerializableMembre } from "~/components/membres/utils"
 
 export interface AppelState {
     pole?: string,

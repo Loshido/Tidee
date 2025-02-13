@@ -43,16 +43,16 @@ export default component$(() => {
         await until(() => !!conn.value);
 
         // On récupère les filtres disponibles
-        data.poles = await cache('list-poles', 60 * 60 * 24, async () => {
+        data.poles = await cache('filtres-poles', 60 * 60 * 24, async () => {
             return await selectPoles(conn.value!)
         });
 
-        data.promotions = await cache('list-promotion', 60 * 60 * 24, async () => {
+        data.promotions = await cache('filtres-promotion', 60 * 60 * 24, async () => {
             return await selectPromotions(conn.value!)
         })
 
         // On récupère les membres via le cache en premier lieu
-        const cached_membres = await cache('list-membre', 60 * 5, async () => {
+        const cached_membres = await cache('membres', 60 * 5, async () => {
             const query = data.builder!.query();
             const response = await conn.value!.query<[Omit<Membre, 'pass'>[]]>(...query);
             return response[0].map(m => MembreUninstanciator(m));

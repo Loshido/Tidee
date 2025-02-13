@@ -1,4 +1,4 @@
-import { component$, QRL, Slot } from "@builder.io/qwik"
+import { component$, type QRL, Slot } from "@builder.io/qwik"
 import { LuChevronDown, LuChevronUp } from "@qwikest/icons/lucide"
 import type { EnteteProps, MembreAppel } from "./types"
 

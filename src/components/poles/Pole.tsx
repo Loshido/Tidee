@@ -55,14 +55,6 @@ export default component$((p: PoleProps & PropsOf<'div'>) => {
             </div>
         </div>
         <div class="btn flex flex-row items-center gap-4 flex-wrap">
-            <Link class="bg-white px-3 py-1 text-xl font-semibold uppercase 
-                select-none cursor-pointer hover:bg-opacity-75 transition-colors">
-                Rejoindre
-            </Link>
-            <Link class="bg-white bg-opacity-75 px-3 py-1 text-xl font-semibold uppercase 
-                select-none cursor-pointer hover:bg-opacity-50 transition-colors">
-                En savoir plus
-            </Link>
             {
                 p.boutons.map(({ nom, ...props }) => <Link {...props} 
                     key={nom} target="_blank"
@@ -101,7 +93,8 @@ export default component$((p: PoleProps & PropsOf<'div'>) => {
             && <Link 
                 href={`/dash/poles/${p.nom}`}
                 class="absolute p-3 right-6 bottom-6 text-white hover:bg-white hover:bg-opacity-10 
-                    cursor-pointer transition-colors rounded">
+                    cursor-pointer transition-colors rounded"
+                    title="Modifier le pôle">
                 <LuPencil/>
             </Link>
         }

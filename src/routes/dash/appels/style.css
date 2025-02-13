@@ -5,25 +5,7 @@
     grid-template-columns: 200px 200px 100px 40px 40px;
 }
 
-@media (width < 800px) {
-    .appel .ligne{
-        grid-template-columns: 150px 150px 75px 40px 40px;
-    }
-}
-@media (width < 640px) {
-    .appel .ligne:not(.tete) {
-        align-items: center;
-    }
-    .appel .ligne{
-        font-size: .7rem;
-        grid-template-columns: 100px 75px 75px 40px 40px;
-    }
-    .appel .ligne > * {
-        padding: 4px 8px;
-    }
-}
-
-.appel .ligne > *{
+.appel .ligne > * {
     padding: 8px 16px;
     transition: background-color .15s ease-in-out;
 }
@@ -51,4 +33,22 @@
 .appel .ligne .cube:hover,
 .appel .ligne.tete > *:hover {
     background-color: #0001;
+}
+
+@media (width < 800px) {
+    .appel .ligne{
+        grid-template-columns: 1fr 1fr 1fr 40px 40px;
+    }
+}
+@media (width < 640px) {
+    .appel .ligne:not(.tete) {
+        align-items: center;
+    }
+    .appel .ligne{
+        font-size: .9rem;
+        grid-template-columns: 1fr 1fr 1fr 40px 40px;
+    }
+    .appel .ligne > * {
+        padding: 3px 6px;
+    }
 }

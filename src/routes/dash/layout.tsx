@@ -133,7 +133,7 @@ export default component$(() => {
                         Appel
                     </NavItem>
                 }
-                <NavItem active={loc.url.pathname == '/dash/parametres/'}>
+                <NavItem active={loc.url.pathname == '/dash/parametres/'} href="#">
                     <LuSettings class="w-5 h-5 sm:w-4 sm:h-4"/>
                     Paramètres
                 </NavItem>

@@ -124,11 +124,9 @@ export default component$(({ membre, exit, poles, update }: EditionProps) => {
 
                                     if (edition.poles.includes(pole)) {
                                         edition.poles = edition.poles
-                                            .split(', ')
                                             .filter(p => p !== pole)
-                                            .join(', ');
                                     } else {
-                                        edition.poles += ', ' + pole
+                                        edition.poles.push(pole)
                                     }
                                 }}>
                                 {

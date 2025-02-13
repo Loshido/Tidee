@@ -5,7 +5,7 @@ import { useNavigate, type DocumentHead } from "@builder.io/qwik-city";
 // Utilitaires
 import { SelectQuery } from "~/components/membres/Queries";
 import { MembreUninstanciator, until } from "~/components/membres/utils";
-import storage, { cache } from "~/lib/local";
+import { cache } from "~/lib/local";
 // Contextes
 import { connectionCtx, notificationsCtx, permissionsCtx } from "~/routes/layout";
 // Fonction de trie
@@ -90,7 +90,7 @@ export default component$(() => {
                 });
             });
 
-        const date = state.date.toLocaleDateString('fr-FR', {
+        const date = state.date.toLocaleDateString(undefined, {
             dateStyle: 'short'
         });
 
@@ -132,7 +132,7 @@ export default component$(() => {
         })
 
         // we remove the current cache since it is not reliable. 
-        localStorage.removeItem('.:list-membre')
+        localStorage.removeItem('.:membres')
     })
 
     // Tâche côté serveur ou pas
@@ -150,7 +150,7 @@ export default component$(() => {
         if(!isBrowser) return;
 
         // L'identifiant de la semaine (ex: 10/02/2025)
-        const date = state.date.toLocaleDateString('fr-FR', {
+        const date = state.date.toLocaleDateString(undefined, {
             dateStyle: 'short'
         })
         // On forme le RecordId du pole en question s'il est dispo
@@ -179,7 +179,7 @@ export default component$(() => {
             if(m.id in o) {
                 m.heures -= o[m.id]
                 m.heures_sup = o[m.id]
-            };
+            }
         })
     })
 
@@ -234,7 +234,7 @@ export default component$(() => {
 
         // On prends tous les membres parce que l'appel doit pouvoir être dynamique.
         // Autant trier les pôles côté client, on le fait déjà sur la pages membres.
-        const cached_membres = await cache('list-membre', 60 * 5, async () => {
+        const cached_membres = await cache('membres', 60 * 5, async () => {
             const query = builder.query();
             const response = await conn.value!.query<[Omit<Membre, 'pass'>[]]>(...query);
             return response[0].map(m => MembreUninstanciator(m));
