@@ -1,9 +1,9 @@
 services:
   surreal:
+    env_file:
+      - .env
     image: surrealdb/surrealdb:latest
-    container_name: surrealdb
-    ports:
-      - "8000:8000"
+    container_name: tide-db
     volumes:
       - ./data/db:/data
     command:
@@ -12,3 +12,19 @@ services:
       - --pass=$DB_PASS
       - rocksdb:/data/surreal.db
     restart: always
+    networks:
+      - nginx
+  tide:
+    env_file:
+      - .env
+    build: .
+    container_name: tide
+    restart: always
+    networks:
+      - nginx
+
+networks:
+  nginx:
+    name: www
+    external: true
+    

@@ -1,4 +1,4 @@
-import { component$, PropsOf } from "@builder.io/qwik";
+import { component$, type PropsOf } from "@builder.io/qwik";
 
 interface Props extends PropsOf<'div'> {
     objectif: number,

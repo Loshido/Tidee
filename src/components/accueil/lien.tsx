@@ -1,5 +1,5 @@
 import { component$, Slot } from "@builder.io/qwik";
-import { Link, LinkProps } from "@builder.io/qwik-city";
+import { Link, type LinkProps } from "@builder.io/qwik-city";
 
 export default component$((props: LinkProps) => {
     return <Link {...props} class={[ props.class && props.class,

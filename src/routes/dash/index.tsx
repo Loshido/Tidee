@@ -3,7 +3,7 @@ import type { DocumentHead } from "@builder.io/qwik-city";
 import { connectionCtx } from "../layout";
 import { until } from "~/components/membres/utils";
 
-import WeekGraph, { ActiviteHebdo, REQUETE_ACTIVITE_HEBDO, responseToWeekGraph, type WeekGraphProps } from "~/components/accueil/week-graph";
+import WeekGraph, { type ActiviteHebdo, REQUETE_ACTIVITE_HEBDO, responseToWeekGraph, type WeekGraphProps } from "~/components/accueil/week-graph";
 import Count from "~/components/accueil/user-count";
 import Lien from "~/components/accueil/lien";
 
