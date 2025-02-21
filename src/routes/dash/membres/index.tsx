@@ -195,7 +195,7 @@ export default component$(() => {
             </h1>
             <p class="text-lg font-light">
                 Liste des membres de l'association 
-                <i class="text-sm"> (Notez que la liste peut vous être restreinte.)</i>
+                {/* <i class="text-sm"> (Notez que la liste peut vous être restreinte.)</i> */}
             </p>
         </header>
 

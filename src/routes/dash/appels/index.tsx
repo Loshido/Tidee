@@ -90,9 +90,7 @@ export default component$(() => {
                 });
             });
 
-        const date = state.date.toLocaleDateString(undefined, {
-            dateStyle: 'short'
-        });
+        const date = state.date.toDateString()
 
         const p = state.poles.find(p => p.nom === state.pole)
         if(!p) return;
@@ -104,7 +102,7 @@ export default component$(() => {
             // 3. On applique la mise à jours des heures
             `
             FOR $ligne IN 
-                (SELECT VALUE heures FROM appels WHERE date = '10/02/2025' AND pole = poles:serveur) {
+                (SELECT VALUE heures FROM appels WHERE date = $date AND pole = $pole) {
                 FOR $h IN $ligne {
                     UPDATE $h.id SET heures = $h.before;
                 };
@@ -150,37 +148,37 @@ export default component$(() => {
         if(!isBrowser) return;
 
         // L'identifiant de la semaine (ex: 10/02/2025)
-        const date = state.date.toLocaleDateString(undefined, {
-            dateStyle: 'short'
-        })
+        const date = state.date.toDateString()
+
         // On forme le RecordId du pole en question s'il est dispo
         const p = state.poles.find(p => p.nom === state.pole)
         if(!p) return;
 
         const pole = new RecordId('poles', p.id)
         
-        const [[heures]] = await conn.value!.query<[[AppelData[]?]]>(
-            `SELECT VALUE heures FROM appels WHERE date = $date AND pole = $pole`,
+        const [[ response ]] = await conn.value!.query<[[{ heures: AppelData[] }?]]>(
+            `SELECT heures FROM appels WHERE date = $date AND pole = $pole`,
             {
                 date,
                 pole
             }
         )
         state.synced = false;
-        if(!heures) return; 
-        state.synced = heures.length > 0
-
+        if(!response) return; 
+        
         // On transforme la liste en object pour avoir un accès O(1)
         // ça évite de faire une boucle dans une boucle et se retrouver à O(n^2)
         const o: { [key: string]: number } = {}
-        heures.forEach(h => o[h.id.id.toString()] = h.heures)
 
+        response.heures.forEach(h => o[h.id.id.toString()] = h.heures)
+        
         membres.forEach(m => {
             if(m.id in o) {
-                m.heures -= o[m.id]
                 m.heures_sup = o[m.id]
+                m.heures -= o[m.id]
             }
         })
+        state.synced = response.heures.length > 0
     })
 
     // On traque si les paramètres du trie changent

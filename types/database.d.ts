@@ -46,7 +46,7 @@ declare global {
     }
 
     
-    type Session {
+    type Session = {
         ac: string,
         db: string,
         exp: unknown,

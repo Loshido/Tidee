@@ -18,3 +18,15 @@
     height: 20px;
     border-radius: 4px;
 }
+
+@media (width < 768px) {
+    .graphique .point{
+        width: 15px;
+        height: 15px;
+    }
+    .graphique .ligne{
+        grid-template-columns: 1fr repeat(var(--colonnes), 15px);
+        font-size: 0.6rem;
+        line-height: .8rem;
+    }
+}

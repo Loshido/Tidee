@@ -27,7 +27,7 @@ export default component$((p: PoleProps & PropsOf<'div'>) => {
     const permissions = useContext(permissionsCtx)
     
     return <div {...p} id={'pole-' + p.nom} class={[
-        "snap-center w-full h-full p-8 sm:p-24",
+        "snap-center w-full h-full p-8 sm:p-24 overflow-hidden",
         "flex flex-col gap-2 sm:gap-8 flex-none relative",
         "pole-container-" + p.nom.toLowerCase(),
         "pole-container", p.images ? 'bg-transparent' : 'bg-black',

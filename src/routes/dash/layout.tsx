@@ -97,7 +97,7 @@ export default component$(() => {
             </p>
         </div>
         <div class={["w-full h-full flex-col sm:justify-between items-center gap-2 sm:gap-1",
-            "p-5 border-r text-xl sm:text-sm sm:flex text-center sm:text-left",
+            "p-5 border-r text-xl sm:text-sm sm:flex text-center sm:text-left bg-white",
             menu.value ? "flex relative top-0 left-0 w-full" : "hidden"]}>
             <div class="flex flex-col gap-2 sm:gap-1 w-full">
                 {
