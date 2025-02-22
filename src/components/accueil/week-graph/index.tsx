@@ -80,7 +80,6 @@ export const responseToWeekGraph = (activites: ActiviteHebdo[]): WeekGraphProps 
             dateStyle: 'medium'
         })
     })
-
     return graph
 }
 

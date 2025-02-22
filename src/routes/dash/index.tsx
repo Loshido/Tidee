@@ -77,19 +77,19 @@ export default component$(() => {
         <WeekGraph objectif={3} graph={data.graph} 
             class="col-span-2 sm:col-span-3 md:col-span-4 sm:row-span-3 md:row-span-2 lg:row-span-3 xl:row-span-2" />
         <div class="flex flex-wrap flex-row items-center content-start justify-stretch gap-2 col-span-2 !bg-transparent backdrop-blur-none">
-            <Lien>
+            <Lien href="https://doc.isenengineering.fr" target="_blank">
                 Doc
                 <LuArrowUpRight/>
             </Lien>
-            <Lien>
+            <Lien href="https://mail.isenengineering.fr" target="_blank">
                 Mail
                 <LuArrowUpRight/>
             </Lien>
-            <Lien>
+            <Lien href="https://status.isenengineering.fr/status" target="_blank">
                 Status
                 <LuArrowUpRight/>
             </Lien>
-            <Lien>
+            <Lien href="https://webmail.isenengineering.fr" target="_blank">
                 Webmail
                 <LuArrowUpRight/>
             </Lien>

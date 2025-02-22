@@ -1,5 +1,5 @@
-import { component$, isDev, type JSXOutput, Slot, useContext, useSignal, useTask$ } from "@builder.io/qwik";
-import { Link, type LinkProps, useDocumentHead, useLocation } from "@builder.io/qwik-city";
+import { component$, type JSXOutput, Slot, useContext, useSignal, useTask$, useVisibleTask$ } from "@builder.io/qwik";
+import { Link, type LinkProps, useDocumentHead, useLocation, useNavigate } from "@builder.io/qwik-city";
 
 export const NavItem = component$(({ active, ...props}: LinkProps & { active?: boolean }) => <Link {...props}
     class={["flex flex-row gap-2 items-center px-3 py-1.5",
@@ -12,65 +12,57 @@ export const NavItem = component$(({ active, ...props}: LinkProps & { active?: b
 type Lien = {
     path: string,
     slot: JSXOutput,
+    name?: string,
     permissions?: string[] // permissions requises pour aller à un page
 }
 const liens: Lien[] = [
     {
-        path: '/dash/',
+        path: '/admin/',
         slot: <>
-            <LuSquareSlash class="w-5 h-5 sm:w-4 sm:h-4" />
+            <LuSatellite class="w-5 h-5 sm:w-4 sm:h-4" />
             Accueil
         </>,
     },
     {
-        path: '/dash/membres/',
+        path: '/admin/membres',
         slot: <>
-            <LuUsers class="w-5 h-5 sm:w-4 sm:h-4" />
+            <LuUsers class="w-5 h-5 sm:w-4 sm:h-4"/>
             Membres
         </>,
+        permissions: ['gerer_membres']
     },
     {
-        path: '/dash/poles/',
+        path: '/admin/poles',
         slot: <>
-            <LuTags class="w-5 h-5 sm:w-4 sm:h-4" />
+            <LuTags class="w-5 h-5 sm:w-4 sm:h-4"/>
             Pôles
         </>,
+        permissions: ['modifier_poles']
     },
     {
-        path: '/dash/planning/',
+        path: '/admin/logs',
         slot: <>
-            <LuCalendarDays class="w-5 h-5 sm:w-4 sm:h-4" />
-            Planning
+            <LuFileClock class="w-5 h-5 sm:w-4 sm:h-4"/>
+            Logs
         </>,
-        permissions: [
-            'planning_voir'
-        ]
+        permissions: ['voir_logs']
     },
     {
-        path: '/dash/notifications/',
+        path: '/admin/parametres',
         slot: <>
-            <LuMessageSquare class="w-5 h-5 sm:w-4 sm:h-4"/>
-            Notifications
-        </>,
-        permissions: [
-            'notifications'
-        ]
-    },
-    {
-        path: '/admin/',
-        slot: <>
-            <LuSatellite class="w-5 h-5 sm:w-4 sm:h-4"/>
-            Administration
-        </>,
-        permissions: [
-            'administration'
-        ]
-    },
+            <LuFileCog class="w-5 h-5 sm:w-4 sm:h-4"/>
+            Paramètres
+        </>
+    }
+
 ]
 
-import { LuAlignLeft, LuBug, LuCalendarDays, LuClipboardCheck, LuLogOut, LuMessageSquare, LuSatellite, LuSettings, LuSquareSlash, LuTags, LuUsers } from "@qwikest/icons/lucide"
+
+import { LuAlignLeft, LuFileClock, LuFileCog, LuSatellite, LuSquareSlash, LuTags, LuUsers } from "@qwikest/icons/lucide"
 import { permissionsCtx } from "../layout";
+import { until } from "~/components/membres/utils";
 export default component$(() => {
+    const nav = useNavigate()
     const menu = useSignal(false)
     const loc = useLocation()
     const head = useDocumentHead()
@@ -80,6 +72,16 @@ export default component$(() => {
         // On ferme le menu lorsque l'on change de page.
         track(() => loc.url.pathname);
         menu.value = false;
+    })
+
+    useVisibleTask$(async () => {
+        await until(() => permissions.length > 0, 25, 1000, () => {
+            nav('/dash/')
+        })
+
+        if(!permissions.includes('administration')) {
+            nav('/dash/')
+        }
     })
 
     if(head.frontmatter.dash == false) {
@@ -94,11 +96,11 @@ export default component$(() => {
                 cursor-pointer select-none transition-colors" onClick$={() => menu.value = !menu.value}>
                 <LuAlignLeft class="h-4 w-4"/>
             </div>
-            <div class="font-medium flex flex-row items-center gap-2">
+            <p class="font-medium">
                 {
-                    liens.find(lien => lien.path == loc.url.pathname)?.slot || ' '
+                    liens.find(lien => lien.path == loc.url.pathname)?.name || ' '
                 }
-            </div>
+            </p>
         </div>
         <div class={["w-full h-full flex-col sm:justify-between items-center gap-2 sm:gap-1",
             "p-5 border-r text-xl sm:text-sm sm:flex text-center sm:text-left bg-white",
@@ -120,30 +122,9 @@ export default component$(() => {
                 }
             </div>
             <div class="flex flex-col gap-2 sm:gap-1 w-full">
-                {
-                    isDev && <NavItem 
-                        active={loc.url.pathname.startsWith('/dash/debug/')} href="/dash/debug/">
-                        <LuBug class="w-5 h-5 sm:w-4 sm:h-4"/>
-                        Debug
-                    </NavItem>
-                }
-                {
-                    // Si l'utilisateur est responsable d'un pôle
-                    permissions.some(permission => 
-                        permission.startsWith('modifier_pole_') 
-                        || permission === 'modifier_poles') &&  <NavItem 
-                        active={loc.url.pathname == '/dash/appels/'} href="/dash/appels/">
-                        <LuClipboardCheck class="w-5 h-5 sm:w-4 sm:h-4"/>
-                        Appel
-                    </NavItem>
-                }
-                <NavItem active={loc.url.pathname == '/dash/parametres/'} href="#">
-                    <LuSettings class="w-5 h-5 sm:w-4 sm:h-4"/>
-                    Paramètres
-                </NavItem>
-                <NavItem href="/deconnexion">
-                    <LuLogOut class="w-5 h-5 sm:w-4 sm:h-4"/>
-                    Déconnexion
+                <NavItem href="/dash/">
+                    <LuSquareSlash class="w-5 h-5 sm:w-4 sm:h-4"/>
+                    Tableau de board
                 </NavItem>
             </div>
         </div>

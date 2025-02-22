@@ -7,8 +7,8 @@ interface Props extends PropsOf<'div'> {
 
 export default component$(({ compte, legende, ...props}: Props) => {
     return <div {...props} class={["px-5 py-4 w-full h-full border rounded flex items-center", props.class && props.class]}>
-        <h1 class="text-2xl font-semibold leading-4">
-            {compte} <span class="text-black/50 font-normal text-sm">{ legende }</span>
+        <h1 class="text-2xl md:text-4xl font-semibold leading-4">
+            {compte} <span class="text-black/50 font-normal text-sm md:text-base">{ legende }</span>
         </h1>
     </div>
 })
