@@ -24,7 +24,7 @@ const liens: Lien[] = [
         </>,
     },
     {
-        path: '/admin/membres',
+        path: '/admin/membres/',
         slot: <>
             <LuUsers class="w-5 h-5 sm:w-4 sm:h-4"/>
             Membres
@@ -32,7 +32,7 @@ const liens: Lien[] = [
         permissions: ['gerer_membres']
     },
     {
-        path: '/admin/poles',
+        path: '/admin/poles/',
         slot: <>
             <LuTags class="w-5 h-5 sm:w-4 sm:h-4"/>
             Pôles
@@ -40,7 +40,7 @@ const liens: Lien[] = [
         permissions: ['modifier_poles']
     },
     {
-        path: '/admin/logs',
+        path: '/admin/logs/',
         slot: <>
             <LuFileClock class="w-5 h-5 sm:w-4 sm:h-4"/>
             Logs
@@ -48,7 +48,7 @@ const liens: Lien[] = [
         permissions: ['voir_logs']
     },
     {
-        path: '/admin/parametres',
+        path: '/admin/parametres/',
         slot: <>
             <LuFileCog class="w-5 h-5 sm:w-4 sm:h-4"/>
             Paramètres
