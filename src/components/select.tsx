@@ -19,11 +19,15 @@ export default component$((s: Selection) => {
         hover:bg-black hover:bg-opacity-5 transition-colors cursor-pointer select-none
         min-w-48"
         document:onClick$={(e, t) => {
+            if(s.items.length == 1) return;
+            
             if(t.contains(e.target as HTMLElement)) {
                 open.value = !open.value
             } else open.value = false;
         }}>
-        <LuChevronsUpDown class="w-4 h-4"/>
+        {
+            s.items.length > 1 && <LuChevronsUpDown class="w-4 h-4"/>
+        }
         {
             s.selected ? s.selected : s.nom
         }

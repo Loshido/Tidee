@@ -45,7 +45,8 @@
     "preview": "qwik build preview && vite preview --open",
     "serve": "bun server/entry.bun.js",
     "start": "vite --open --mode ssr",
-    "qwik": "qwik"
+    "qwik": "qwik",
+    "setup-db": "bun ./setup/setup.ts"
   },
   "trustedDependencies": [
     "sharp"
