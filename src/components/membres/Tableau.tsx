@@ -59,11 +59,9 @@ export default component$(({ trier, trie }: PropsTableau) => {
                             {
                                 trie[0] === colonne.name
                                 ? <>
-                                    {
-                                        trie[1] == 'asc'
-                                        ? <LuChevronUp/>
-                                        : <LuChevronDown/>
-                                    }
+                                    <LuChevronUp class={trie[1] == 'asc' 
+                                        ? 'transition-transform' 
+                                        : 'rotate-180 transition-transform'}/>
                                 </>
                                 : null
                             }

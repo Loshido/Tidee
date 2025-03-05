@@ -6,6 +6,7 @@ declare global {
         nom: string,
         poles: RecordId[]
         responsables: RecordId[],
+        permissions: RecordId[],
         meta: {
             images?: {
                 // De cette façon, on peut afficher une image pour chaque appareil

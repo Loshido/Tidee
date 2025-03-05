@@ -4,6 +4,7 @@ import { LuClock, LuPencil, LuUsers } from "@qwikest/icons/lucide";
 import { permissionsCtx } from "~/routes/layout";
 
 export interface PoleProps {
+    id: string,
     // Nom affiché du pôle (sera mis en majuscule)
     nom: string,
     // Description (rendu en html)

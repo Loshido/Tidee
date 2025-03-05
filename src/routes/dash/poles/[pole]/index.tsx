@@ -10,14 +10,8 @@ import Style from "./Style";
 import Boutons from "./Boutons";
 import Images from "./Images";
 
-const QUERY = `SELECT 
-    nom, 
-    meta.boutons as boutons, 
-    meta.description as description, 
-    meta.style as style, 
-    meta.images as images
-FROM poles
-WHERE nom = $nom;`;
+import { QUERY } from "..";
+import type { RecordId } from "surrealdb";
 
 type Pole = Omit<PoleProps, 'membres'>
 
@@ -44,19 +38,22 @@ export default component$(() => {
             return;
         }
 
-        const data = await cache('pole-' + loc.params.pole, 60 * 10, async () => {
-            const response = await conn.value!.query<[Pole[]]>(QUERY, {
-                nom: loc.params.pole
-            });
+        const poles = await cache('poles', 60 * 4, async () => {
+            const response = await conn.value!.query<[(PoleProps & { id: RecordId })[]]>(QUERY);
 
-            return response[0]
+            return response[0].map(pole => ({
+                ...pole,
+                id: pole.id.id.toString()
+            }))
         })
-    
-        if(data.length > 0) {
-            if(!data[0].images) data[0].images = ['default:']
-            if(!data[0].style) data[0].style = '';
 
-            store.pole = data[0] as Required<Pole>
+        const data = poles.find(pole => pole.nom === loc.params.pole)
+    
+        if(data) {
+            if(!data.images) data.images = ['default:']
+            if(!data.style) data.style = '';
+
+            store.pole = data as Required<Pole>
             const id = document.getElementById('title')
             const css = document.getElementById('css')
             const html = document.getElementById('html')
@@ -210,7 +207,6 @@ export default component$(() => {
                             });
                         
                         storage.removeItem('poles')
-                        storage.removeItem('pole-' + loc.params.pole)
                         
                         if(loc.params.pole !== store.pole.nom) {
                             nav('/dash/poles/' + store.pole.nom);
@@ -249,6 +245,7 @@ export default component$(() => {
         {
             store.pole && <Pole
                 class="w-screen h-screen"
+                id={store.pole.id}
                 nom={store.pole.nom}
                 description={store.pole.description}
                 boutons={store.pole.boutons}

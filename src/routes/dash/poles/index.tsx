@@ -1,12 +1,14 @@
 import { component$, useContext, useStore, useVisibleTask$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
+import type { RecordId } from "surrealdb";
 import { until } from "~/components/membres/utils";
 
 import Pole, { type PoleProps } from "~/components/poles/Pole";
 import { cache } from "~/lib/local";
 import { connectionCtx } from "~/routes/layout";
 
-const QUERY = `SELECT 
+export const QUERY = `SELECT 
+    id,
     nom, 
     meta.boutons as boutons, 
     meta.description as description, 
@@ -28,9 +30,12 @@ export default component$(() => {
         await until(() => !!conn.value);
 
         const data = await cache('poles', 60 * 4, async () => {
-            const response = await conn.value!.query<[PoleProps[]]>(QUERY);
+            const response = await conn.value!.query<[(PoleProps & { id: RecordId })[]]>(QUERY);
 
-            return response[0]
+            return response[0].map(pole => ({
+                ...pole,
+                id: pole.id.id.toString()
+            }))
         })
 
         poles.push(...data);
@@ -40,6 +45,7 @@ export default component$(() => {
         {
             poles.map(pole => <Pole
                 key={pole.nom} 
+                id={pole.id}
                 nom={pole.nom}
                 description={pole.description}
                 boutons={pole.boutons}

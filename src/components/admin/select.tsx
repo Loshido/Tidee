@@ -5,7 +5,7 @@ interface Props {
         active: boolean,
         slot: JSXOutput,
         onClick: QRL<() => void>
-    }[]
+    }[] 
 }
 
 export default component$(({ items }: Props) => {

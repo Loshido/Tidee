@@ -1,6 +1,6 @@
 import { $, component$, useContext, useSignal, useStore, useVisibleTask$ } from "@builder.io/qwik";
 import { useNavigate } from "@builder.io/qwik-city";
-import { LuArrowDownToLine, LuShield, LuTags, LuX } from "@qwikest/icons/lucide";
+import { LuArrowDownToLine, LuShield, LuTags } from "@qwikest/icons/lucide";
 import { RecordId } from "surrealdb";
 import Entree from "~/components/admin/entree";
 import Select from "~/components/admin/select";
@@ -83,7 +83,7 @@ export default component$(() => {
             // On prends la mesure de la requête
             const t = Date.now()
             // On prends les informations des membres qui correspondent à la recherche
-            const [response] = await conn.value?.query<Membres>(
+            const [response] = await conn.value.query<Membres>(
                 `SELECT id, nom, prenom FROM membres 
                 WHERE 
                     string::contains(string::lowercase(nom), $search) 
@@ -124,8 +124,6 @@ export default component$(() => {
         // autrement, on modifierait tous les membres.
         if(!utilisateur.value) return;
         const entries = Object.entries(modifications)
-            // On garde uniquement les entrées modifiées
-            .filter(entry => entry[1] !== undefined)
             .map(([key, value]) => {
                 switch(key) {
                     case 'poles':
@@ -148,7 +146,7 @@ export default component$(() => {
         }
 
         const params = entries
-            .map(([key, _]) => `${key} = $${key}`)
+            .map(([key]) => `${key} = $${key}`)
             .join(', ');
 
         const query = `UPDATE membres SET ` + params + ` WHERE id = $id`;
@@ -303,7 +301,7 @@ export default component$(() => {
                             active: utilisateur.value!.permissions.includes(permission),
                             onClick: $(() => {
                                 const i = utilisateur.value!.permissions.indexOf(permission);
-                                if(i !== undefined && i !== -1) {
+                                if(i !== -1) {
                                     utilisateur.value!.permissions.splice(i, 1);
                                 } else {
                                     utilisateur.value!.permissions.push(permission)
@@ -324,7 +322,7 @@ export default component$(() => {
                             active: utilisateur.value!.poles.includes(pole),
                             onClick: $(() => {
                                 const i = utilisateur.value!.poles.indexOf(pole);
-                                if(i !== undefined && i !== -1) {
+                                if(i !== -1) {
                                     utilisateur.value!.poles.splice(i, 1);
                                 } else {
                                     utilisateur.value!.poles.push(pole)
