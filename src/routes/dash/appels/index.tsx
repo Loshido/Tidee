@@ -126,7 +126,9 @@ export default component$(() => {
         state.synced = response[1].length > 0;
         notifications.push({
             duration: 5,
-            contenu: `Vous avez fait l'appel du ${date} pour ${heures.length} membres.`
+            contenu: `Vous avez fait l'appel du ${state.date.toLocaleDateString('FR-fr', {
+                dateStyle: 'medium'
+            })} pour ${heures.length} membres.`
         })
 
         // we remove the current cache since it is not reliable. 
