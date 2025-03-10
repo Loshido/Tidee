@@ -1,4 +1,4 @@
-import { component$, QRL, useSignal } from "@builder.io/qwik";
+import { component$, type QRL, useSignal } from "@builder.io/qwik";
 import type { SerializablePoles } from "./types"
 
 type Props = {

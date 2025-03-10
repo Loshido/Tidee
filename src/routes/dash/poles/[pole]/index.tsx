@@ -243,8 +243,8 @@ export default component$(() => {
                                 duration: 3
                             })
                             return
-                        };
-                        if(!data?.images) data.images = ['default:']
+                        }
+                        if(!data.images) data.images = ['default:']
                         if(!data.style) data.style = '';
             
                         store.pole = data as Required<Pole>

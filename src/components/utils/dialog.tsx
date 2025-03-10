@@ -1,4 +1,4 @@
-import { component$, JSXOutput, QRL } from "@builder.io/qwik";
+import { component$, type JSXOutput, type QRL } from "@builder.io/qwik";
 
 type Props = {
     open: boolean,

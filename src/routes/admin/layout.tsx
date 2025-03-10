@@ -1,8 +1,8 @@
-import { component$, type JSXOutput, Slot, useContext, useSignal, useTask$, useVisibleTask$ } from "@builder.io/qwik";
-import { Link, type LinkProps, useDocumentHead, useLocation, useNavigate } from "@builder.io/qwik-city";
+import { component$, Slot, useContext, useSignal, useTask$, useVisibleTask$ } from "@builder.io/qwik";
+import { useDocumentHead, useLocation, useNavigate } from "@builder.io/qwik-city";
 
 import AdminNavigation from "~/components/nav/admin"
-import { LuAlignLeft, LuFileClock, LuFileCog, LuSatellite, LuSquareSlash, LuTags, LuUsers } from "@qwikest/icons/lucide"
+import { LuAlignLeft } from "@qwikest/icons/lucide"
 import { permissionsCtx } from "../layout";
 import { until } from "~/components/membres/utils";
 export default component$(() => {

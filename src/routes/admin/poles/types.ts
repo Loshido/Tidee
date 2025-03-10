@@ -1,4 +1,4 @@
-import { RecordId } from "surrealdb";
+import type { RecordId } from "surrealdb";
 
 export type Responsable = {
     id: RecordId,

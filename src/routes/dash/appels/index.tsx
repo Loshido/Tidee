@@ -88,7 +88,7 @@ export default component$(() => {
                 duration: 3
             })
             return
-        };
+        }
         state.last_sent = Date.now() 
         const heures: AppelData[] = [];
 
@@ -112,7 +112,7 @@ export default component$(() => {
                 duration: 3
             })
             return
-        };
+        }
 
         const pole = new RecordId('poles', p.id)
         const response = await conn.value!.query<[null, unknown[], null]>(

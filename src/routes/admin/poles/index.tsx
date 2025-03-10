@@ -2,7 +2,7 @@ import { $, component$, useContext, useStore, useVisibleTask$ } from "@builder.i
 import { useNavigate } from "@builder.io/qwik-city";
 import { until } from "~/components/membres/utils";
 import { connectionCtx, notificationsCtx, permissionsCtx } from "~/routes/layout";
-import { RequetePoles, SerializablePoles } from "./types";
+import type { RequetePoles, SerializablePoles } from "./types";
 import Pole from "./pole";
 import { LuPlus } from "@qwikest/icons/lucide";
 
@@ -57,6 +57,7 @@ export default component$(() => {
     })
 
     const save = $(async (id: string, modification: Partial<Omit<SerializablePoles, 'id'>>) => {
+        console.log(id, modification)
         return
     })
 

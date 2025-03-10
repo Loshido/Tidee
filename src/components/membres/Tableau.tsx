@@ -1,5 +1,5 @@
 import { component$, type PropsOf, type QRL, Slot } from "@builder.io/qwik";
-import { LuChevronDown, LuChevronUp } from "@qwikest/icons/lucide";
+import { LuChevronUp } from "@qwikest/icons/lucide";
 
 type PropsTableau = {
     trier: QRL<(colonne: string) => void>,

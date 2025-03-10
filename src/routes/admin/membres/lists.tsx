@@ -1,4 +1,4 @@
-import { component$, QRL } from "@builder.io/qwik";
+import { component$, type QRL } from "@builder.io/qwik";
 
 type Props = {
     membres: {
