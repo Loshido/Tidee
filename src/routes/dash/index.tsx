@@ -10,7 +10,7 @@ import Lien from "~/components/accueil/lien";
 import Yanliu from "~/assets/yanliu.png?jsx"
 import Blur from "~/assets/bg-blur.svg?jsx"
 import { LuArrowUpRight } from "@qwikest/icons/lucide";
-import { cache } from "~/lib/local";
+import cache from "~/lib/cache";
 
 interface Data {
     membres: number,
@@ -46,7 +46,7 @@ export default component$(() => {
         await until(() => !!conn.value)
 
 
-        const responses = await cache('home', 60 * 60 * 24, async () => {
+        const responses = await cache('accueil', async () => {
             const resp = await conn.value!.query<Query>(REQUETE);
 
             const graph = responseToWeekGraph(resp[0]);
@@ -57,7 +57,7 @@ export default component$(() => {
                 poles: resp[3][0].count,
                 graph
             }
-        }) 
+        }, 60 * 60 * 24 * 1000) 
         
         data.graph = responses.graph
         data.membres = responses.membres;

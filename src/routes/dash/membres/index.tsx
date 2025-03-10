@@ -3,7 +3,7 @@ import type { DocumentHead } from "@builder.io/qwik-city";
 
 import "./style.css"
 import { connectionCtx, permissionsCtx } from "~/routes/layout";
-import { cache } from "~/lib/local";
+import cache from "~/lib/cache";
 import Tableau, { Ligne } from "~/components/membres/Tableau";
 import { LuLoader2 } from "@qwikest/icons/lucide";
 
@@ -43,20 +43,22 @@ export default component$(() => {
         await until(() => !!conn.value);
 
         // On récupère les filtres disponibles
-        data.poles = await cache('filtres-poles', 60 * 60 * 24, async () => {
-            return await selectPoles(conn.value!)
-        });
+        const filtres = await cache('filtres', async () => 
+            await Promise.all([
+                selectPoles(conn.value!),
+                selectPromotions(conn.value!)
+            ]
+        ), 60 * 60 * 24 * 1000);
 
-        data.promotions = await cache('filtres-promotion', 60 * 60 * 24, async () => {
-            return await selectPromotions(conn.value!)
-        })
+        data.poles = filtres[0];
+        data.promotions = filtres[1];
 
         // On récupère les membres via le cache en premier lieu
-        const cached_membres = await cache('membres', 60 * 5, async () => {
+        const cached_membres = await cache('membres', async () => {
             const query = data.builder!.query();
             const response = await conn.value!.query<[Omit<Membre, 'pass'>[]]>(...query);
             return response[0].map(m => MembreUninstanciator(m));
-        })
+        }, 60 * 5 * 1000)
 
         membres.push(...cached_membres)
 

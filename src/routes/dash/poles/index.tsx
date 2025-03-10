@@ -4,7 +4,7 @@ import type { RecordId } from "surrealdb";
 import { until } from "~/components/membres/utils";
 
 import Pole, { type PoleProps } from "~/components/poles/Pole";
-import { cache } from "~/lib/local";
+import cache from "~/lib/cache";
 import { connectionCtx } from "~/routes/layout";
 
 export const QUERY = `SELECT 
@@ -29,14 +29,14 @@ export default component$(() => {
     useVisibleTask$(async () => {
         await until(() => !!conn.value);
 
-        const data = await cache('poles', 60 * 4, async () => {
+        const data = await cache('poles', async () => {
             const response = await conn.value!.query<[(PoleProps & { id: RecordId })[]]>(QUERY);
 
             return response[0].map(pole => ({
                 ...pole,
                 id: pole.id.id.toString()
             }))
-        })
+        }, 60 * 4 * 1000)
 
         poles.push(...data);
     })

@@ -1,5 +1,5 @@
 import { component$, useContext, useStore } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { type DocumentHead, Link } from "@builder.io/qwik-city";
 import Entree from "~/components/admin/entree";
 import { connectionCtx, notificationsCtx } from "~/routes/layout";
 
@@ -87,3 +87,13 @@ export default component$(() => {
         </div>
     </section>
 })
+
+export const head: DocumentHead = {
+    title: "Tidee - Mots de passe",
+    meta: [
+        {
+            name: "description",
+            content: "Une solution de gestion d'association",
+        },
+    ],
+};

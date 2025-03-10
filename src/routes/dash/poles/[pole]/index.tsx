@@ -3,7 +3,8 @@ import { type DocumentHead, Link, useLocation, useNavigate } from "@builder.io/q
 import { LuArrowDownToLine, LuArrowLeft, LuDelete, LuUndo2 } from "@qwikest/icons/lucide";
 import { until } from "~/components/membres/utils";
 import Pole, { type PoleProps } from "~/components/poles/Pole";
-import storage, { cache } from "~/lib/local";
+import storage from "~/lib/local";
+import cache from "~/lib/cache";
 import { connectionCtx, notificationsCtx, permissionsCtx } from "~/routes/layout";
 import Desc from "./Desc";
 import Style from "./Style";
@@ -39,14 +40,14 @@ export default component$(() => {
             return;
         }
 
-        const poles = await cache('poles', 60 * 4, async () => {
+        const poles = await cache('poles', async () => {
             const response = await conn.value!.query<[(PoleProps & { id: RecordId })[]]>(QUERY);
 
             return response[0].map(pole => ({
                 ...pole,
                 id: pole.id.id.toString()
             }))
-        })
+        }, 60 * 4 * 1000)
 
         const data = poles.find(pole => pole.nom === loc.params.pole)
     
@@ -226,14 +227,14 @@ export default component$(() => {
                     hover:bg-red-200 transition-colors 
                     w-fit flex flex-row items-center gap-2"
                     onClick$={async () => {
-                        const poles = await cache('poles', 60 * 4, async () => {
+                        const poles = await cache('poles', async () => {
                             const response = await conn.value!.query<[(PoleProps & { id: RecordId })[]]>(QUERY);
                 
                             return response[0].map(pole => ({
                                 ...pole,
                                 id: pole.id.id.toString()
                             }))
-                        })
+                        }, 60 * 4 * 1000)
                 
                         const data = poles.find(pole => pole.nom === loc.params.pole)
                         if(!data) {

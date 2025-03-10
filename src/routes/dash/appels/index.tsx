@@ -5,7 +5,7 @@ import { useNavigate, type DocumentHead } from "@builder.io/qwik-city";
 // Utilitaires
 import { SelectQuery } from "~/components/membres/Queries";
 import { MembreUninstanciator, until } from "~/components/membres/utils";
-import { cache } from "~/lib/local";
+import cache from "~/lib/cache";
 import { RecordId } from "surrealdb";
 
 // Contextes
@@ -255,11 +255,11 @@ export default component$(() => {
 
         // On prends tous les membres parce que l'appel doit pouvoir être dynamique.
         // Autant trier les pôles côté client, on le fait déjà sur la pages membres.
-        const cached_membres = await cache('membres', 60 * 5, async () => {
+        const cached_membres = await cache('membres', async () => {
             const query = builder.query();
             const response = await conn.value!.query<[Omit<Membre, 'pass'>[]]>(...query);
             return response[0].map(m => MembreUninstanciator(m));
-        })
+        }, 60 * 5)
 
         membres.push(...cached_membres.map(m => ({
             ...m,

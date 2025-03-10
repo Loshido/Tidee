@@ -1,5 +1,5 @@
 import { $, component$, useContext, useStore, useVisibleTask$ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { type DocumentHead, Link } from "@builder.io/qwik-city";
 import { LuArrowUpRight, LuAsterisk, LuLock, LuMessageSquare } from "@qwikest/icons/lucide";
 import Dialog from "~/components/utils/dialog";
 import storage from "~/lib/local";
@@ -99,3 +99,13 @@ export default component$(() => {
         </Link>
     </section>
 })
+
+export const head: DocumentHead = {
+    title: "Tidee - Paramètres",
+    meta: [
+        {
+            name: "description",
+            content: "Une solution de gestion d'association",
+        },
+    ],
+};

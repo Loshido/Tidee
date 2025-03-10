@@ -76,6 +76,7 @@ export default component$((p: PoleProps & PropsOf<'div'>) => {
                             })
                             .map(([media, url]) => 
                                 media === 'default'
+                                // eslint-disable-next-line
                                 ? <img key={media} 
                                         src={url} alt="Bannière pôle" 
                                         class="w-full h-full" loading="lazy" />

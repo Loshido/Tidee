@@ -133,9 +133,6 @@ export default component$(() => {
                 Accéder
             </div>
             <div class="flex flex-col gap-1 p-1">
-                <Lien href="/etc/password-reset/">
-                    Mots de passe oublié
-                </Lien>
                 <Lien href="https://github.com/Loshido/Tidee/issues/new" target="_blank">
                     Ouvrir un ticket
                 </Lien>
