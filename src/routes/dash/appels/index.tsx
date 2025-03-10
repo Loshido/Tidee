@@ -173,13 +173,7 @@ export default component$(() => {
 
         // On forme le RecordId du pole en question s'il est dispo
         const p = state.poles.find(p => p.nom === state.pole)
-        if(!p) {
-            notifications.push({
-                contenu: "Pôle introuvable",
-                duration: 3
-            })
-            return
-        };
+        if(!p) return;
 
         const pole = new RecordId('poles', p.id)
         

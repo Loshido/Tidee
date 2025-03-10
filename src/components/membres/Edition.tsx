@@ -9,7 +9,7 @@ interface EditionProps {
     update: QRL<(membre: Partial<SerializableMembre>) => Promise<boolean>>
 }
 
-export const TR = component$(() => <tr class="group">
+export const TR = component$(() => <tr class="group select-none">
     <Slot/>
 </tr>)
 export const TH = component$(() => <th class="px-4 py-3 border-r">
@@ -96,16 +96,19 @@ export default component$(({ membre, exit, poles, update }: EditionProps) => {
                     <TH>
                         Poles
                     </TH>
-                    <TD onClick$={(e, t) => {
-                        if(edition.active && e.target == t) {
-                            edition.dropdown = !edition.dropdown
-                        }
+                    <TD document:onClick$={(e, t) => {
+                        const target = e.target as HTMLElement | null;
+                        if(target && target.contains(t) && edition.active && !edition.dropdown) {
+                            edition.dropdown = true;
+                        } else if(edition.active && edition.dropdown) {
+                            edition.dropdown = false;
+                        } 
                     }}>
                         <span>
                             {
                                 edition.poles 
-                                ? edition.poles 
-                                : membre.poles
+                                ? edition.poles.join(', ')
+                                : membre.poles.join(', ')
                             }
                         </span>
                         <Dropdown class={edition.dropdown ? '*:select-none' : 'hidden'}>
