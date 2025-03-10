@@ -4,7 +4,7 @@ import { LuArrowDownToLine, LuArrowLeft, LuDelete, LuUndo2 } from "@qwikest/icon
 import { until } from "~/components/membres/utils";
 import Pole, { type PoleProps } from "~/components/poles/Pole";
 import storage, { cache } from "~/lib/local";
-import { connectionCtx, permissionsCtx } from "~/routes/layout";
+import { connectionCtx, notificationsCtx, permissionsCtx } from "~/routes/layout";
 import Desc from "./Desc";
 import Style from "./Style";
 import Boutons from "./Boutons";
@@ -16,6 +16,7 @@ import type { RecordId } from "surrealdb";
 type Pole = Omit<PoleProps, 'membres'>
 
 export default component$(() => {
+    const notifications = useContext(notificationsCtx)
     const permissions = useContext(permissionsCtx);
     const loc = useLocation()
     const nav = useNavigate()
@@ -96,12 +97,12 @@ export default component$(() => {
             <Boutons>
                 {
                     store.pole?.boutons.map((bouton, i) => <>
-                        <input class="col-span-2 outline-none" type="text"
+                        <input class="col-span-2 outline-none" type="text" key={i}
                             value={bouton.nom}
                             onInput$={(_, t) => {
                                 bouton.nom = t.value;
                             }}/>
-                        <input class="col-span-3 outline-none" type="text"
+                        <input class="col-span-3 outline-none" type="text" key={i}
                             value={bouton.href}
                             onInput$={(_, t) => {
                                 bouton.href = t.value;
@@ -111,7 +112,8 @@ export default component$(() => {
                             hover:bg-opacity-5 hover:bg-black font-light text-sm"
                             onClick$={() => {
                                 store.pole!.boutons.splice(i, 1)
-                            }}>
+                            }}
+                            key={i}>
                             <LuDelete/>
                             supprimer
                         </div>
@@ -137,28 +139,28 @@ export default component$(() => {
                     })
                     .map(([query, url], i) => query === 'default'
                     ? <>
-                        <div class="px-3 py-2 border col-span-3">
+                        <div class="px-3 py-2 border col-span-3" key={i}>
                             default
                         </div>
-                        <input type="text" class="px-3 py-2 border outline-none col-span-4"
+                        <input type="text" key={i} class="px-3 py-2 border outline-none col-span-4"
                             value={url}
                             onInput$={(_, t) =>{
                                 store.pole!.images[i] = `default:${t.value}`
                             }}/>
                     </>
                     : <>
-                        <input class="border outline-none w-full px-3 py-2  col-span-3" 
+                        <input key={i} class="border outline-none w-full px-3 py-2  col-span-3" 
                             type="text"
                             value={query}
                             onInput$={(_, t) => {
                                 store.pole!.images[i] = `${t.value}:${url}`
                             }}/>
-                        <input type="text" class="px-3 py-2 border outline-none w-full col-span-3"
+                        <input key={i} type="text" class="px-3 py-2 border outline-none w-full col-span-3"
                             value={url}
                             onInput$={(_, t) => {
                                 store.pole!.images[i] = `${query}:${t.value}`
                             }}/>
-                        <div class="px-3 py-2 flex flex-row gap-2 select-none cursor-pointer items-center
+                        <div key={i} class="px-3 py-2 flex flex-row gap-2 select-none cursor-pointer items-center
                             transition-colors hover:bg-opacity-5 hover:bg-black font-light text-sm"
                             onClick$={() => {
                                 store.pole!.images.splice(i, 1)
@@ -205,6 +207,10 @@ export default component$(() => {
                                 boutons: store.pole.boutons,
                                 id: loc.params.pole
                             });
+                        notifications.push({
+                            contenu: "Modifications envoyées.",
+                            duration: 3
+                        })
                         
                         storage.removeItem('poles')
                         
@@ -220,15 +226,27 @@ export default component$(() => {
                     hover:bg-red-200 transition-colors 
                     w-fit flex flex-row items-center gap-2"
                     onClick$={async () => {
-                        const response = await conn.value!.query<[Pole[]]>(QUERY, {
-                            nom: loc.params.pole
-                        });
-                        if(response[0].length === 0) return
-                        const p = response[0][0]
-                        if(!p.images) p.images = ['default:']
-                        if(!p.style) p.style = '';
+                        const poles = await cache('poles', 60 * 4, async () => {
+                            const response = await conn.value!.query<[(PoleProps & { id: RecordId })[]]>(QUERY);
+                
+                            return response[0].map(pole => ({
+                                ...pole,
+                                id: pole.id.id.toString()
+                            }))
+                        })
+                
+                        const data = poles.find(pole => pole.nom === loc.params.pole)
+                        if(!data) {
+                            notifications.push({
+                                contenu: "Pôle introuvable.",
+                                duration: 3
+                            })
+                            return
+                        };
+                        if(!data?.images) data.images = ['default:']
+                        if(!data.style) data.style = '';
             
-                        store.pole = p as Required<Pole>
+                        store.pole = data as Required<Pole>
                         const id = document.getElementById('title')
                         const css = document.getElementById('css')
                         const html = document.getElementById('html')

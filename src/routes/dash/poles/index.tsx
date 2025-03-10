@@ -11,7 +11,7 @@ export const QUERY = `SELECT
     id,
     nom, 
     meta.boutons as boutons, 
-    meta.description as description, 
+    string::html::sanitize(meta.description) as description, 
     meta.style as style, 
     meta.images as images,
     (

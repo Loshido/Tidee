@@ -6,10 +6,14 @@ import { useNavigate, type DocumentHead } from "@builder.io/qwik-city";
 import { SelectQuery } from "~/components/membres/Queries";
 import { MembreUninstanciator, until } from "~/components/membres/utils";
 import { cache } from "~/lib/local";
+import { RecordId } from "surrealdb";
+
 // Contextes
 import { connectionCtx, notificationsCtx, permissionsCtx } from "~/routes/layout";
+
 // Fonction de trie
 import sort from "~/components/membres/Sort";
+
 // CSS
 import "./style.css"
 // Types du fichier
@@ -23,7 +27,6 @@ import { LuArrowDownToLine, LuSend, LuTag } from "@qwikest/icons/lucide";
 import Select from "~/components/select";
 // Composants de la page
 import { Entete, Ligne } from "./composants";
-import { RecordId } from "surrealdb";
 
 export default component$(() => {
     const conn = useContext(connectionCtx);
@@ -61,12 +64,14 @@ export default component$(() => {
 
     const heures_sup = {
         ajouter: $((id: string) => {
+            // ajoute une heure à un membre 
             const i = membres.findIndex(m => m.id === id)
             if(i >= 0 && membres[i].heures_sup < 8) {
                 membres[i].heures_sup += 1
             }
         }),
         retirer: $((id: string) => {
+            // retire une heure à un membre 
             const i = membres.findIndex(m => m.id === id)
             if(i >= 0 && membres[i].heures_sup > -8 && membres[i].heures + membres[i].heures_sup > 0) {
                 membres[i].heures_sup -= 1
@@ -74,9 +79,17 @@ export default component$(() => {
         })
     }
 
+    // envoie l'appel
     const send = $(async () => {
-        if(!state.pole || state.last_sent + 1000 * 5 > Date.now()) return;
-        state.last_sent = Date.now() // évite que les utilisateurs spamment le bouton.
+        // évite que les utilisateurs spamment le bouton.
+        if(!state.pole || state.last_sent + 1000 * 5 > Date.now()) {
+            notifications.push({
+                contenu: "Arrêtez de spam",
+                duration: 3
+            })
+            return
+        };
+        state.last_sent = Date.now() 
         const heures: AppelData[] = [];
 
         membres
@@ -92,8 +105,14 @@ export default component$(() => {
 
         const date = state.date.toDateString()
 
-        const p = state.poles.find(p => p.nom === state.pole)
-        if(!p) return;
+        const p = state.poles.find(p => p.nom === state.pole);
+        if(!p) {
+            notifications.push({
+                contenu: "Pôle introuvable",
+                duration: 3
+            })
+            return
+        };
 
         const pole = new RecordId('poles', p.id)
         const response = await conn.value!.query<[null, unknown[], null]>(
@@ -154,7 +173,13 @@ export default component$(() => {
 
         // On forme le RecordId du pole en question s'il est dispo
         const p = state.poles.find(p => p.nom === state.pole)
-        if(!p) return;
+        if(!p) {
+            notifications.push({
+                contenu: "Pôle introuvable",
+                duration: 3
+            })
+            return
+        };
 
         const pole = new RecordId('poles', p.id)
         
@@ -175,6 +200,8 @@ export default component$(() => {
         response.heures.forEach(h => o[h.id.id.toString()] = h.heures)
         
         membres.forEach(m => {
+            m.heures += m.heures_sup;
+            m.heures_sup = 0;
             if(m.id in o) {
                 m.heures_sup = o[m.id]
                 m.heures -= o[m.id]

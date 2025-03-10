@@ -251,7 +251,7 @@ export default component$(() => {
                 select={selectMembre}/>
         </div>
         {
-            utilisateur.value 
+            utilisateur.value !== undefined
             ? <Modify
                 utilisateur={utilisateur.value}
                 permissions={permissionsList}
@@ -270,6 +270,5 @@ export default component$(() => {
                 {/* Todo: ajouter un membre */}
             </section> 
         }
-        
     </section>
 })

@@ -103,7 +103,7 @@ export const liens_dash: {
             </>
         },
         {
-            path: "/dash/parametres/",
+            path: "/deconnexion/",
             slot: <>
                 <LuLogOut class="w-5 h-5 sm:w-4 sm:h-4"/>
                 Déconnexion

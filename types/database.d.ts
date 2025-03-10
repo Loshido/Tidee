@@ -37,7 +37,8 @@ declare global {
         prenom: string,
         // pass: string, // should be protected by SurrealDB
         poles: string[],
-        promotion: string
+        promotion: string,
+        permissions: RecordId[]
     }
 
     type AppelData = {
