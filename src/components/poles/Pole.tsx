@@ -77,9 +77,13 @@ export default component$((p: PoleProps & PropsOf<'div'>) => {
                             .map(([media, url]) => 
                                 media === 'default'
                                 // eslint-disable-next-line
-                                ? <img key={media} 
-                                        src={url} alt="Bannière pôle" 
+                                ? (
+                                    url.length === 0
+                                    ? undefined
+                                    : <img key={media} 
+                                        src={url} alt="" 
                                         class="w-full h-full" loading="lazy" />
+                                )
                                 : <source key={media}
                                         media={`(width < ${media}px)`}
                                         srcset={url}/>
@@ -89,12 +93,12 @@ export default component$((p: PoleProps & PropsOf<'div'>) => {
         }
         {
             loc.url.pathname == '/dash/poles/' 
-            && (
+            && (    
                 permissions.includes('modifier_pole_' + p.nom.toLowerCase()) 
                 || permissions.includes('modifier_poles'))
             && <Link 
                 href={`/dash/poles/${p.nom}`}
-                class="absolute p-3 right-6 bottom-6 text-white hover:bg-white hover:bg-opacity-10 
+                class="absolute p-2 right-4 top-4 text-white text-sm hover:bg-white hover:bg-opacity-10 
                     cursor-pointer transition-colors rounded"
                     title="Modifier le pôle">
                 <LuPencil/>

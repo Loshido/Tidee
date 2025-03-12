@@ -1,10 +1,15 @@
-import { component$, Slot, useContext, useSignal, useTask$ } from "@builder.io/qwik";
+import { component$, Slot, useContext, useSignal, useStylesScoped$, useTask$ } from "@builder.io/qwik";
 import { useDocumentHead, useLocation } from "@builder.io/qwik-city";
 
 import { LuAlignLeft } from "@qwikest/icons/lucide"
 import { permissionsCtx } from "../layout";
 import DashNavigation from "~/components/nav/dash"
 export default component$(() => {
+    useStylesScoped$(`
+        #dash-layout:has(#poles-explorer) {
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }`)
     const menu = useSignal(false)
     const loc = useLocation()
     const head = useDocumentHead()
@@ -20,7 +25,7 @@ export default component$(() => {
         return <Slot/>
     }
 
-    return <section 
+    return <section id="dash-layout"
         class="w-svw h-svh sm:grid overflow-hidden"
         style="grid-template-columns: auto 1fr">
         <div class="sm:hidden p-2 flex flex-row gap-3 border-b items-center">

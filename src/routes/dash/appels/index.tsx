@@ -227,6 +227,7 @@ export default component$(() => {
                 duration: 3
             })
             nav('/dash/');
+            return;
         }
 
         // On récupère les pôles pour lesquels l'utilisateur est responsable.

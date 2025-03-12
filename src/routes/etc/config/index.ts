@@ -3,8 +3,9 @@ import fs from "fs";
 
 export const onGet: RequestHandler = (requestEvent) => {
     requestEvent.cacheControl('day');
+    const path = requestEvent.env.get('CONFIG_PATH') || './data/config.json'
     
-    const config = fs.readFileSync('./data/config.json', {
+    const config = fs.readFileSync(path, {
         encoding: 'utf-8'
     });
 

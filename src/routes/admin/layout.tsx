@@ -19,7 +19,7 @@ export default component$(() => {
     })
 
     useVisibleTask$(async () => {
-        await until(() => permissions.length > 0, 25, 1000, () => {
+        await until(() => permissions.length > 0, 1000, () => {
             nav('/dash/')
         })
 

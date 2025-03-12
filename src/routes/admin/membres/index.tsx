@@ -39,7 +39,7 @@ export default component$(() => {
     // Initilisation.
     useVisibleTask$(async () => {
         // On attend que la connection avec la BDD soit établit.
-        await until(() => permissions.length > 0 && !!conn.value, 25, 1000, () => {
+        await until(() => permissions.length > 0 && !!conn.value, 1000, () => {
             nav('/admin/')
         })
 

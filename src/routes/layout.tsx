@@ -18,7 +18,7 @@ export const notificationsCtx = createContextId<Notification[]>('notifications')
 // Permet d'accéder aux permissions de l'utilisateur.
 // Pas de panique! Même si l'utilisateur parvient à changer les permissions côté client, 
 // les actions non-autorisées seront refusées par la base de données.
-export const permissionsCtx = createContextId<string[]>('permissions')
+export const permissionsCtx = createContextId<string[]>('permissions');
 
 export default component$(() => {
     const loc = useLocation()

@@ -27,7 +27,6 @@ export default component$(() => {
     useVisibleTask$(async () => {
         await until(
             () => permissions.length !== 0 && !!conn.value,
-            100, // interval
             5000, // timeout duration
             () => { // timeout cb
                 nav('/dash/poles')
@@ -52,8 +51,8 @@ export default component$(() => {
         const data = poles.find(pole => pole.nom === loc.params.pole)
     
         if(data) {
-            if(!data.images) data.images = ['default:']
-            if(!data.style) data.style = '';
+            if(data.images === undefined) data.images = ['default:']
+            if(data.style === undefined) data.style = '';
 
             store.pole = data as Required<Pole>
             const id = document.getElementById('title')
@@ -200,12 +199,14 @@ export default component$(() => {
                             SET nom = $nom, 
                                 meta.style = $style, 
                                 meta.description = $desc,
-                                meta.boutons = $boutons
+                                meta.boutons = $boutons,
+                                meta.images = $images
                             WHERE nom = $id`, {
                                 nom: store.pole.nom,
                                 style: store.pole.style,
                                 desc: store.pole.description,
                                 boutons: store.pole.boutons,
+                                images: store.pole.images,
                                 id: loc.params.pole
                             });
                         notifications.push({

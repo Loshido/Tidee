@@ -35,6 +35,7 @@ export default component$(() => {
             duration: 4,
             contenu: 'Suppression du cache.'
         })
+        cache.details = '0 entrées en cache.'
         cache.open = false;
     })
 

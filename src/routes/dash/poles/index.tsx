@@ -41,7 +41,7 @@ export default component$(() => {
         poles.push(...data);
     })
 
-    return <section class="h-full w-full overflow-x-auto snap-x snap-mandatory flex flex-row">
+    return <section id="poles-explorer" class="h-full w-full overflow-x-auto snap-x snap-mandatory flex flex-row">
         {
             poles.map(pole => <Pole
                 key={pole.nom} 

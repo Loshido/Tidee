@@ -6,10 +6,9 @@ services:
     container_name: tide-db
     volumes:
       - ./data/db:/data
+    user: root
     command:
       - start
-      - --user=$DB_USER
-      - --pass=$DB_PASS
       - rocksdb:/data/surreal.db
     restart: always
     networks:
@@ -18,6 +17,8 @@ services:
     env_file:
       - .env
     build: .
+    volumes:
+      - tide-vol:/app/data
     container_name: tide
     restart: always
     networks:
@@ -27,3 +28,7 @@ networks:
   www:
     name: www
     external: true
+
+volumes:
+  tide-vol:
+    name: tide-vol
