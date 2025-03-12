@@ -348,7 +348,9 @@ export default component$(() => {
             </div>
             : <div class="w-full h-full flex flex-row gap-2 items-center justify-center min-h-96 font-medium">
                 <LuTag/>
-                Vous devez choisir le pôle pour lequel vous voulez faire l'appel!
+                <p class="w-2/3">
+                    Vous devez choisir le pôle pour lequel vous voulez faire l'appel!
+                </p>
             </div>
         }
         <div class="p-5 sm:p-10

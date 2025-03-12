@@ -43,7 +43,7 @@ export default component$(() => {
         if(!conn.value) {
             // On écarte les cas qui nous intéressent pas.
             notifications.push({
-                contenu: 'La base de données est inaccessible',
+                contenu: '📡 La base de données est inaccessible',
                 duration: 5
             })
             return;
@@ -72,7 +72,7 @@ export default component$(() => {
             permissions.push(...perms[0].map(perm => perm.id.toString()))
 
             notifications.push({
-                contenu: 'Connecté(e) pour 4h',
+                contenu: 'Connecté(e) pour 2 semaines 🌊',
                 duration: 3
             })
             // On stocke le token pour pouvoir le réutiliser dans les 4h
@@ -80,7 +80,7 @@ export default component$(() => {
             nav('/dash')
         } catch {
             notifications.push({
-                contenu: 'Identifiants incorrectes.',
+                contenu: 'Identifiants incorrectes!',
                 style: 'border-red-600 bg-white',
                 progress_style: 'bg-red-600 bg-opacity-100',
                 duration: 5

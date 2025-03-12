@@ -178,12 +178,12 @@ export default component$(({ membre, exit, poles, update }: EditionProps) => {
                                 edition.dropdown = false;
                                 exit()
                                 notifications.push({
-                                    contenu: "Membre mis à jour.",
+                                    contenu: "✅ Membre mis à jour.",
                                     duration: 4
                                 })
                             } else {
                                 notifications.push({
-                                    contenu: "Une erreur est parvenue.",
+                                    contenu: "🕵️ Une erreur est parvenue.",
                                     duration: 4
                                 })
                             }

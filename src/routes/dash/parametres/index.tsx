@@ -39,8 +39,8 @@ export default component$(() => {
         cache.open = false;
     })
 
-    return <section class="grid grid-rows-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 h-full w-full">
-        <Link class="border h-full w-full p-5 rounded
+    return <section class="flex flex-col md:grid grid-rows-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 h-full w-full">
+        <Link class="border h-fit md:h-full w-full p-5 rounded
             hover:bg-black/5 transition-colors cursor-pointer select-none"
             href="/dash/parametres/password">
             <div class="flex flex-row gap-2 items-center text-lg font-semibold mb-2">
@@ -51,7 +51,7 @@ export default component$(() => {
                 Créer un nouveau mots de passe en utilisant votre mots de passe actuel
             </p>
         </Link>
-        <div class="border h-full w-full p-5 rounded
+        <div class="border h-fit md:h-full w-full p-5 rounded
             hover:bg-black/5 transition-colors cursor-pointer select-none"
             onClick$={() => cache.open = true}>
             <div class="flex flex-row gap-2 items-center text-lg font-semibold mb-2">
@@ -85,7 +85,7 @@ export default component$(() => {
                     onClick: closeCacheConfirmation
                 }
             ]}/>
-        <Link class="border h-full w-full p-5 rounded
+        <Link class="border h-fit md:h-full w-full p-5 rounded
             hover:bg-black/5 transition-colors cursor-pointer select-none"
             href="https://github.com/Loshido/Tidee/issues/new?labels=report"
             target="_blank">

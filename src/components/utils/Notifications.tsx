@@ -29,7 +29,10 @@ const style = `
 
 export default component$(({ notifications }: Props) => {
     useStyles$(style);
-    return <div class="absolute top-4 right-4 flex flex-col gap-2 z-[1000]">
+    return <div class="fixed top-4 right-4 flex flex-col gap-2 z-[1000]"
+        style={{
+            maxWidth: "calc(100% - 2rem)"
+        }}>
         {
             notifications.map((notif, i) => <div key={i}
                 class={[

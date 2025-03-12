@@ -43,7 +43,6 @@ const shutdown = async () => {
     await app.stop(true)
 }
 
-process.addListener('SIGABRT', shutdown);
 process.addListener('SIGKILL', shutdown);
-process.addListener('SIGQUIT', shutdown);
+process.addListener('SIGTERM', shutdown);
 process.addListener('exit', shutdown);
