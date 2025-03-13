@@ -5,7 +5,7 @@ import { until } from "~/components/membres/utils";
 
 import Pole, { type PoleProps } from "~/components/poles/Pole";
 import cache from "~/lib/cache";
-import { connectionCtx } from "~/routes/layout";
+import { configCtx, connectionCtx } from "~/routes/layout";
 
 export const QUERY = `SELECT 
     id,
@@ -24,6 +24,8 @@ FROM poles;`;
 
 export default component$(() => {
     const conn = useContext(connectionCtx);
+    const config = useContext(configCtx)
+
     const poles = useStore<PoleProps[]>([])
 
     useVisibleTask$(async () => {
@@ -36,7 +38,7 @@ export default component$(() => {
                 ...pole,
                 id: pole.id.id.toString()
             }))
-        }, 60 * 4 * 1000)
+        }, config.cacheExpiration?.poles || 60 * 4)
 
         poles.push(...data);
     })

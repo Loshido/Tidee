@@ -1,6 +1,6 @@
 import { component$, useContext, useStore, useVisibleTask$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
-import { connectionCtx } from "../layout";
+import { configCtx, connectionCtx } from "../layout";
 import { until } from "~/components/membres/utils";
 
 import WeekGraph, { type ActiviteHebdo, REQUETE_ACTIVITE_HEBDO, responseToWeekGraph, type WeekGraphProps } from "~/components/accueil/week-graph";
@@ -35,6 +35,7 @@ SELECT count(id) FROM poles GROUP ALL;`
 
 export default component$(() => {
     const conn = useContext(connectionCtx)
+    const config = useContext(configCtx)
     const data = useStore<Data>({
         membres: 0,
         responsables: 0,
@@ -57,7 +58,7 @@ export default component$(() => {
                 poles: resp[3][0].count,
                 graph
             }
-        }, 60 * 60 * 24 * 1000) 
+        }, config.cacheExpiration?.accueil || 60 * 60 * 24) 
         
         data.graph = responses.graph
         data.membres = responses.membres;

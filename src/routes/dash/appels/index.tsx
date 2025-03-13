@@ -9,7 +9,7 @@ import cache from "~/lib/cache";
 import { RecordId } from "surrealdb";
 
 // Contextes
-import { connectionCtx, notificationsCtx, permissionsCtx } from "~/routes/layout";
+import { configCtx, connectionCtx, notificationsCtx, permissionsCtx } from "~/routes/layout";
 
 // Fonction de trie
 import sort from "~/components/membres/Sort";
@@ -32,6 +32,7 @@ export default component$(() => {
     const conn = useContext(connectionCtx);
     const permissions = useContext(permissionsCtx);
     const notifications = useContext(notificationsCtx);
+    const config = useContext(configCtx)
     const nav = useNavigate()
 
     const membres = useStore<MembreAppel[]>([]);
@@ -260,7 +261,7 @@ export default component$(() => {
             const query = builder.query();
             const response = await conn.value!.query<[Omit<Membre, 'pass'>[]]>(...query);
             return response[0].map(m => MembreUninstanciator(m));
-        }, 60 * 5)
+        }, config.cacheExpiration?.membres || 60 * 5)
 
         membres.push(...cached_membres.map(m => ({
             ...m,

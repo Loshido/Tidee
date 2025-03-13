@@ -5,7 +5,7 @@ import { until } from "~/components/membres/utils";
 import Pole, { type PoleProps } from "~/components/poles/Pole";
 import storage from "~/lib/local";
 import cache from "~/lib/cache";
-import { connectionCtx, notificationsCtx, permissionsCtx } from "~/routes/layout";
+import { configCtx, connectionCtx, notificationsCtx, permissionsCtx } from "~/routes/layout";
 import Desc from "./Desc";
 import Style from "./Style";
 import Boutons from "./Boutons";
@@ -19,6 +19,7 @@ type Pole = Omit<PoleProps, 'membres'>
 export default component$(() => {
     const notifications = useContext(notificationsCtx)
     const permissions = useContext(permissionsCtx);
+    const config = useContext(configCtx)
     const loc = useLocation()
     const nav = useNavigate()
     const conn = useContext(connectionCtx);
@@ -46,7 +47,7 @@ export default component$(() => {
                 ...pole,
                 id: pole.id.id.toString()
             }))
-        }, 60 * 4 * 1000)
+        }, config.cacheExpiration?.poles || 60 * 4)
 
         const data = poles.find(pole => pole.nom === loc.params.pole)
     
@@ -235,7 +236,7 @@ export default component$(() => {
                                 ...pole,
                                 id: pole.id.id.toString()
                             }))
-                        }, 60 * 4 * 1000)
+                        }, config.cacheExpiration?.poles || 60 * 4)
                 
                         const data = poles.find(pole => pole.nom === loc.params.pole)
                         if(!data) {

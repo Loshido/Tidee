@@ -2,7 +2,7 @@ import { $, component$, noSerialize, type NoSerialize, useContext, useStore, use
 import type { DocumentHead } from "@builder.io/qwik-city";
 
 import "./style.css"
-import { connectionCtx, permissionsCtx } from "~/routes/layout";
+import { configCtx, connectionCtx, permissionsCtx } from "~/routes/layout";
 import cache from "~/lib/cache";
 import Tableau, { Ligne } from "~/components/membres/Tableau";
 import { LuLoader2 } from "@qwikest/icons/lucide";
@@ -25,6 +25,7 @@ interface Data {
 
 export default component$(() => {
     const conn = useContext(connectionCtx)
+    const config = useContext(configCtx)
     const permissions = useContext(permissionsCtx)
     const data = useStore<Data>({
         trie: ['nom', 'asc'],
@@ -48,7 +49,7 @@ export default component$(() => {
                 selectPoles(conn.value!),
                 selectPromotions(conn.value!)
             ]
-        ), 60 * 60 * 24 * 1000);
+        ), config.cacheExpiration?.filtres || 60 * 60 * 24);
 
         data.poles = filtres[0];
         data.promotions = filtres[1];
@@ -58,7 +59,7 @@ export default component$(() => {
             const query = data.builder!.query();
             const response = await conn.value!.query<[Omit<Membre, 'pass'>[]]>(...query);
             return response[0].map(m => MembreUninstanciator(m));
-        }, 60 * 5 * 1000)
+        }, config.cacheExpiration?.membres || 60 * 5)
 
         membres.push(...cached_membres)
 
@@ -182,6 +183,8 @@ export default component$(() => {
                 // @ts-ignore
                 membres[i][cle] = valeur
             }
+
+            localStorage.removeItem('.:membres')
             
             return true
         } catch(e) {

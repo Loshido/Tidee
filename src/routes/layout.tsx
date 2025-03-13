@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import Notifications, { type Notification } from "~/components/utils/Notifications";
 import db, { type Connection } from "~/lib/db";
 import type { RecordId } from "surrealdb";
+import fetchConfiguration, { Config } from "~/lib/config";
 
 // On permet aux membres enfants d'utiliser ces signaux / stores
 // ça permet d'avoir un état syncroniser dans toute l'application
@@ -14,6 +15,7 @@ export const connectionCtx = createContextId<Signal<Connection>>('connection')
 
 // Permet d'ajouter des notifications
 export const notificationsCtx = createContextId<Notification[]>('notifications')
+export const configCtx = createContextId<Partial<Config>>('config')
 
 // Permet d'accéder aux permissions de l'utilisateur.
 // Pas de panique! Même si l'utilisateur parvient à changer les permissions côté client, 
@@ -25,6 +27,7 @@ export default component$(() => {
     const nav = useNavigate()
     const database = useSignal<Connection>();
     const permissionsStore = useStore<string[]>([])
+    const config = useStore<Partial<Config>>({});
 
     const notifs_count = useSignal(0)
     const notifs = useStore<Notification[]>([]);
@@ -32,6 +35,7 @@ export default component$(() => {
     useContextProvider(connectionCtx, database);
     useContextProvider(notificationsCtx, notifs);
     useContextProvider(permissionsCtx, permissionsStore);
+    useContextProvider(configCtx, config);
 
     useTask$(({ track }) => {
         // On execute cette fonction à chaque fois 
@@ -58,6 +62,12 @@ export default component$(() => {
     useVisibleTask$(async () => {
         // On essaye de connecter le client pour pas qu'il n'est à se connecter manuellement.
         try {
+            const conf = await fetchConfiguration();
+            Object.keys(conf).forEach(key => {
+                // @ts-ignore
+                config[key] = conf[key]
+            })
+
             const connection = await db();
             // Impossible de serialiser la class Surreal
             database.value = noSerialize(connection);
@@ -80,7 +90,7 @@ export default component$(() => {
             const perms = await database.value!.query<[RecordId[]]>("fn::permissions($session.rd)");
             permissionsStore.push(...perms[0].map(perm => perm.id.toString()))
 
-            console.info("Authentifié avec succès")
+            console.info("Authentifié avec succès");
         } catch {
             console.error("Authentification échoué")
             if(database.value && database.value.connection?.connection.token) {

@@ -1,5 +1,6 @@
-import { component$, type PropsOf, type QRL, Slot } from "@builder.io/qwik";
+import { component$, type PropsOf, type QRL, Slot, useContext } from "@builder.io/qwik";
 import { LuChevronUp } from "@qwikest/icons/lucide";
+import { configCtx } from "~/routes/layout";
 
 type PropsTableau = {
     trier: QRL<(colonne: string) => void>,
@@ -82,6 +83,7 @@ type Ligne = {
     ligne: [string, string, string, number, string, string]
 };
 export const Ligne = component$(({ ligne, ...props }: Ligne & PropsOf<'tr'>) => {
+    const config = useContext(configCtx)
     return <tr {...props} key={ligne[0]}>
         <td>
             {
@@ -93,17 +95,42 @@ export const Ligne = component$(({ ligne, ...props }: Ligne & PropsOf<'tr'>) => 
                 ligne[2]
             }
         </td>
-        <td>
+        <td style={{
+            color: ligne[3] >= 70 ? '#28A501' : '',
+            fontWeight: ligne[3] >= 70 ? 700 : 500
+        }}>
             {
                 ligne[3]
             }h
         </td>
         <td>
             {
-                ligne[4]
+                ligne[4].split(', ').map((pole, i, a) => <span>
+                    <span style={{
+                        fontWeight: 900,
+                        color: config.poles && pole in config.poles
+                            ? config.poles[pole]
+                            : ''
+                    }}>
+                        {pole}
+                    </span>
+                    {
+                        i == a.length - 1
+                        ? ''
+                        : ', '
+                    }
+                </span>)
             }
         </td>
-        <td>
+        <td style={{
+            fontWeight: 900,
+            color: config.promotions && ligne[5] in config.promotions 
+                ? config.promotions[ligne[5]] 
+                : '',
+            backgroundColor: config.promotions && ligne[5] in config.promotions
+                ? 'white'
+                : ''
+        }}>
             {
                 ligne[5]
             }
