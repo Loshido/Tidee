@@ -7,6 +7,7 @@ import { connectionCtx, notificationsCtx, permissionsCtx } from "~/routes/layout
 import type { Membres, Membre, Utilisateur } from "./types";
 import Modify from "./modify";
 import Lists from "./lists";
+import Create from "./create";
 
 // Le temps entre chaque touche pour que l'entrée soit validée.
 // (si tu écris très vite, ça sert à rien de faire autant de
@@ -21,21 +22,29 @@ export default component$(() => {
     // permet de changer de page programmatiquement
     const nav = useNavigate()
 
-    // DEBUG: on stocke le temps que prends la requête
-    const timeToSearch = useSignal(0)
-    // on stocke les permissions que l'utilisateur peut donner.
-    const permissionsList = useStore<string[]>([]);
-    // on stocke les pôles attribuables.
-    const polesList = useStore<string[]>([]);
+    const data = useStore<{
+        elapsed: number,
+        permissions: string[],
+        poles: string[],
+        mode: 'user' | 'ajouter' | 'recherche'
+    }>({
+        mode: 'recherche',
+        // DEBUG: on stocke le temps que prends la requête
+        elapsed: 0,
+        // on stocke les permissions que l'utilisateur peut donner.
+        permissions: [],
+        // on stocke les pôles attribuables.
+        poles: []
+    })
     // L'utilisateur que l'on modifie.
     const utilisateur = useSignal<Utilisateur | undefined>()
-
+    
     // Les membres que l'on peut modifier.
     const membres = useStore<{
         id: string,
         membre: string
     }[]>([])
-
+    
     // Initilisation.
     useVisibleTask$(async () => {
         // On attend que la connection avec la BDD soit établit.
@@ -55,10 +64,10 @@ export default component$(() => {
             `SELECT permissions FROM membres WHERE id = $session.rd; SELECT VAlUE id FROM poles;`);
 
         liste?.permissions.forEach(perm => {
-            permissionsList.push(perm.id.toString());
+            data.permissions.push(perm.id.toString());
         })
         poles.forEach(pole => {
-            polesList.push(pole.id.toString())
+            data.poles.push(pole.id.toString())
         })
     })
 
@@ -91,10 +100,10 @@ export default component$(() => {
                     search: recherche.toLowerCase()
                 }
             );
-            timeToSearch.value = Date.now() - t;
+            data.elapsed = Date.now() - t;
             // On peut enlever la mesure après un certains temps.
             setTimeout(() => {
-                timeToSearch.value = 0;
+                data.elapsed = 0;
             }, 3000)
 
             // On supprime les membres de la requête précédente.
@@ -112,11 +121,44 @@ export default component$(() => {
                     membre: membre.nom + ' ' + membre.prenom
                 })
             })
-
-
         }, DEBOUNCE_TIME);
     })
 
+    const create = $(async (modifications: Omit<Utilisateur, 'id'>) => {
+        const response = await conn.value!.query<[unknown[]]>(`CREATE membres CONTENT {
+            nom: $nom,
+            prenom: $prenom,
+            heures: $heures,
+            email: $email,
+            promotion: $promotion,
+            permissions: $permissions,
+            poles: $poles,
+            pass: ''
+        }`, {
+            ...modifications,
+            permissions: modifications.permissions.map(perm => 
+                new RecordId('permissions', perm)),
+            poles: modifications.poles.map(pole => 
+                new RecordId('poles', pole))
+        })
+
+        if(response[0].length > 0) {
+            notifications.push({
+                contenu: `${modifications.prenom} a été ajouté à la base de données`,
+                duration: 4
+            });
+
+            data.mode = 'recherche';
+            return true
+        } else {
+            notifications.push({
+                contenu: `Sans succès 💥`,
+                duration: 3
+            });
+            return false;
+        }
+    }
+)
     const send = $(async (modifications: Partial<Utilisateur>) => {
         // On ne fait rien s'il n'y a pas d'id,
         // autrement, on modifierait tous les membres.
@@ -173,7 +215,7 @@ export default component$(() => {
         if(!utilisateur.value) {
             return
         }
-        if(!permissions.includes('supprimer_membres')) {
+        if(!data.permissions.includes('supprimer_membres')) {
             notifications.push({
                 duration: 5,
                 contenu: "Vous n'avez pas les permissions pour supprimer un membre."
@@ -228,47 +270,76 @@ export default component$(() => {
                     permission.id.toString()),
                 poles: m.poles.map(pole => pole.id.toString())
             }
+            data.mode = 'user'
         }
     })
 
     return <section class="flex flex-col w-full h-screen">
-        <div class="relative">
-            <span class="absolute bottom-0 left-0 text-xs text-black/15">
-                {
-                    timeToSearch.value === 0 
-                    ? null
-                    : timeToSearch.value + ' ms'
-                }
-            </span>
-            <input 
-                id="recherche-membres"
-                onInput$={search}
-                class="p-5 text-xl border-b outline-none w-full"
-                placeholder="Rechercher un membre"
-                type="search"/>
-            <Lists
-                membres={membres}
-                select={selectMembre}/>
+        <div class="flex flex-row flex-wrap items-center p-2 gap-2 *:cursor-pointer select-none">
+            <div class={["px-3 py-1",
+                data.mode === 'recherche' ? 'bg-black/15' : 'bg-black/5 hover:bg-black/15']}
+                onClick$={() => {
+                    data.mode = 'recherche';
+                    utilisateur.value = undefined
+                }}>
+                Rechercher
+            </div>
+            <div class={["px-3 py-1",
+                data.mode === 'ajouter' ? 'bg-black/15' : 'bg-black/5 hover:bg-black/15']}
+                onClick$={() => {
+                    data.mode = 'ajouter'
+                    utilisateur.value = undefined;
+                }}>
+                Ajouter
+            </div>
+            {
+                utilisateur.value && <div
+                    class={["px-3 py-1 bg-black/5 hover:bg-black/15",
+                        data.mode === 'user' ? 'bg-black/15' : 'bg-black/5 hover:bg-black/15']}>
+                    {
+                        utilisateur.value.prenom
+                    }
+                </div>
+            }
         </div>
         {
-            utilisateur.value !== undefined
-            ? <Modify
+            data.mode === 'recherche' && <div class="relative">
+                <span class="absolute bottom-0 left-0 text-xs text-black/15">
+                    {
+                        data.elapsed === 0 
+                        ? null
+                        : data.elapsed + ' ms'
+                    }
+                </span>
+                <input 
+                    id="recherche-membres"
+                    onInput$={search}
+                    class="p-5 text-xl border-b outline-none w-full"
+                    placeholder="Rechercher un membre"
+                    type="search"/>
+                <Lists
+                    membres={membres}
+                    select={selectMembre}/>
+            </div>
+        }
+        {
+            data.mode === 'user' && utilisateur.value !== undefined && <Modify
                 utilisateur={utilisateur.value}
-                permissions={permissionsList}
-                poles={polesList}
+                permissions={data.permissions}
+                poles={data.poles}
                 actions={{
                     send,
                     suppression
                 }}/>
-            : <section class="p-2">
-                <div
-                    class="w-fit px-2 py-1 border rounded flex flex-row gap-2 items-center 
-                    hover:bg-blue-400 hover:bg-opacity-5 transition-colors cursor-pointer select-none">
-                    <LuPlus class="w-4 h-4"/>
-                    Ajouter un membre
-                </div>
-                {/* Todo: ajouter un membre */}
-            </section> 
+        }
+        {
+            data.mode === 'ajouter' && <Create
+                permissions={data.permissions}
+                poles={data.poles}
+                actions={{
+                    create,
+                    suppression
+                }}/>
         }
     </section>
 })
