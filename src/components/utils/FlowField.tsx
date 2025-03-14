@@ -38,8 +38,8 @@ class FlowField {
         // On ajuste la taille du dessin
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
-        this.w = this.canvas.width = window.innerWidth;
-        this.h = this.canvas.height = window.innerHeight;
+        this.w = window.innerWidth;
+        this.h = window.innerHeight;
 
         this.columns = Math.floor(this.w / this.size) + 1;
         this.rows = Math.floor(this.h / this.size) + 1;

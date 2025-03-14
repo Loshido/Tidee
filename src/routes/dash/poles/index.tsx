@@ -38,7 +38,7 @@ export default component$(() => {
                 ...pole,
                 id: pole.id.id.toString()
             }))
-        }, config.cacheExpiration?.poles || 60 * 4)
+        }, config.cacheExpiration?.poles || 60 * 4 * 1000)
 
         poles.push(...data);
     })

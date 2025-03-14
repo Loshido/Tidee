@@ -261,7 +261,7 @@ export default component$(() => {
             const query = builder.query();
             const response = await conn.value!.query<[Omit<Membre, 'pass'>[]]>(...query);
             return response[0].map(m => MembreUninstanciator(m));
-        }, config.cacheExpiration?.membres || 60 * 5)
+        }, config.cacheExpiration?.membres || 60 * 5 * 1000)
 
         membres.push(...cached_membres.map(m => ({
             ...m,

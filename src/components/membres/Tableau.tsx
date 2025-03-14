@@ -105,7 +105,7 @@ export const Ligne = component$(({ ligne, ...props }: Ligne & PropsOf<'tr'>) => 
         </td>
         <td>
             {
-                ligne[4].split(', ').map((pole, i, a) => <span>
+                ligne[4].split(', ').map((pole, i, a) => <span key={i}>
                     <span style={{
                         fontWeight: 900,
                         color: config.poles && pole in config.poles

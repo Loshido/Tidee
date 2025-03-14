@@ -58,7 +58,7 @@ export default component$(() => {
                 poles: resp[3][0].count,
                 graph
             }
-        }, config.cacheExpiration?.accueil || 60 * 60 * 24) 
+        }, config.cacheExpiration?.accueil || 60 * 60 * 24 * 1000) 
         
         data.graph = responses.graph
         data.membres = responses.membres;

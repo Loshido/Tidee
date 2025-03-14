@@ -49,7 +49,7 @@ export default component$(() => {
                 selectPoles(conn.value!),
                 selectPromotions(conn.value!)
             ]
-        ), config.cacheExpiration?.filtres || 60 * 60 * 24);
+        ), config.cacheExpiration?.filtres || 60 * 60 * 24 * 1000);
 
         data.poles = filtres[0];
         data.promotions = filtres[1];
@@ -59,7 +59,7 @@ export default component$(() => {
             const query = data.builder!.query();
             const response = await conn.value!.query<[Omit<Membre, 'pass'>[]]>(...query);
             return response[0].map(m => MembreUninstanciator(m));
-        }, config.cacheExpiration?.membres || 60 * 5)
+        }, config.cacheExpiration?.membres || 60 * 5 * 1000)
 
         membres.push(...cached_membres)
 
