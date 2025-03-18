@@ -76,10 +76,10 @@ export default component$((p: PoleProps & PropsOf<'div'>) => {
                             })
                             .map(([media, url]) => 
                                 media === 'default'
-                                // eslint-disable-next-line
-                                ? (
-                                    url.length === 0
-                                    ? undefined
+                            ? (
+                                url.length === 0
+                                ? undefined
+                                    // eslint-disable-next-line
                                     : <img key={media} 
                                         src={url} alt="" 
                                         class="w-full h-full" loading="lazy" />

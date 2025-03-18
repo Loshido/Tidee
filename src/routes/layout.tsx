@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import Notifications, { type Notification } from "~/components/utils/Notifications";
 import db, { type Connection } from "~/lib/db";
 import type { RecordId } from "surrealdb";
-import fetchConfiguration, { Config } from "~/lib/config";
+import fetchConfiguration, { type Config } from "~/lib/config";
 
 // On permet aux membres enfants d'utiliser ces signaux / stores
 // ça permet d'avoir un état syncroniser dans toute l'application

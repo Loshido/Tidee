@@ -4,7 +4,8 @@ WORKDIR /app
 COPY . .
 
 RUN echo "{}" >> ./data/config.json
-RUN npm install
+RUN --mount=type=cache,target=./cache \
+    npm install
 RUN npm run build
 
 FROM oven/bun:alpine AS production

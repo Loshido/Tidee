@@ -1,6 +1,5 @@
 import { $, component$, useContext, useSignal, useStore, useVisibleTask$ } from "@builder.io/qwik";
 import { useNavigate } from "@builder.io/qwik-city";
-import { LuPlus } from "@qwikest/icons/lucide";
 import { RecordId } from "surrealdb";
 import { until } from "~/components/membres/utils";
 import { connectionCtx, notificationsCtx, permissionsCtx } from "~/routes/layout";

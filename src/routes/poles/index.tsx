@@ -1,6 +1,5 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
-import { LuLoader2 } from "@qwikest/icons/lucide";
 import { createCache } from "qwache";
 import type { RecordId } from "surrealdb";
 import db from "~/lib/db";
@@ -9,7 +8,7 @@ import Pole, { type PoleProps } from "~/components/poles/Pole";
 
 const cache = createCache();
 
-export const QUERY = `SELECT 
+const QUERY = `SELECT 
     id,
     nom, 
     meta.boutons as boutons, 
@@ -59,13 +58,6 @@ export const usePoles = routeLoader$(async (requestEvent) => {
 export default component$(() => {
 
     const poles = usePoles();
-
-    if(!poles.value) {
-        return <section class="w-screen h-screen flex items-center justify-center">
-            <LuLoader2 class="animate-spin"/>
-
-        </section>
-    }
 
     return <section class="h-screen w-full overflow-x-auto snap-x snap-mandatory flex flex-row">
         {
