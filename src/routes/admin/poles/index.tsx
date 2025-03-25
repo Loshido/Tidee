@@ -1,10 +1,12 @@
-import { $, component$, useContext, useStore, useVisibleTask$ } from "@builder.io/qwik";
+import { $, component$, createContextId, useContext, useContextProvider, useStore, useVisibleTask$ } from "@builder.io/qwik";
 import { useNavigate } from "@builder.io/qwik-city";
 import { until } from "~/components/membres/utils";
 import { connectionCtx, notificationsCtx, permissionsCtx } from "~/routes/layout";
 import type { RequetePoles, SerializablePoles } from "./types";
 import Pole from "./pole";
 import { LuPlus } from "@qwikest/icons/lucide";
+
+export const polesCtx = createContextId<SerializablePoles[]>('poles-edition');
 
 export default component$(() => {
     const nav = useNavigate();
@@ -13,6 +15,7 @@ export default component$(() => {
     const conn = useContext(connectionCtx)
 
     const poles = useStore<SerializablePoles[]>([])
+    useContextProvider(polesCtx, poles)
 
     // Initilisation.
     useVisibleTask$(async () => {
@@ -61,7 +64,7 @@ export default component$(() => {
         return
     })
 
-    return <section class="flex flex-col text-xl font-medium">
+    return <section class="flex flex-col text-xl font-medium has-[.active]:text-black/25">
         {
             poles.map(pole => <Pole
                 key={pole.id}

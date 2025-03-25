@@ -5,7 +5,7 @@ import { until } from "~/components/membres/utils";
 import { connectionCtx, notificationsCtx, permissionsCtx } from "~/routes/layout";
 import type { Membres, Membre, Utilisateur } from "./types";
 import Modify from "./modify";
-import Lists from "./lists";
+import Lists from "~/components/admin/lists";
 import Create from "./create";
 
 // Le temps entre chaque touche pour que l'entrée soit validée.
@@ -156,8 +156,8 @@ export default component$(() => {
             });
             return false;
         }
-    }
-)
+    })
+
     const send = $(async (modifications: Partial<Utilisateur>) => {
         // On ne fait rien s'il n'y a pas d'id,
         // autrement, on modifierait tous les membres.
@@ -247,7 +247,7 @@ export default component$(() => {
         
     })
 
-    const selectMembre = $(async (membre: { id: string, membre: string }) => {
+    const selectMembre = $(async (membre: { id: string, text: string }) => {
         membres.splice(0, membres.length)
         const input = document.getElementById('recherche-membres') as HTMLInputElement | null;
         if(input) {
@@ -293,7 +293,7 @@ export default component$(() => {
             </div>
             {
                 utilisateur.value && <div
-                    class={["px-3 py-1 bg-black/5 hover:bg-black/15",
+                    class={["px-3 py-1",
                         data.mode === 'user' ? 'bg-black/15' : 'bg-black/5 hover:bg-black/15']}>
                     {
                         utilisateur.value.prenom
@@ -317,7 +317,10 @@ export default component$(() => {
                     placeholder="Rechercher un membre"
                     type="search"/>
                 <Lists
-                    membres={membres}
+                    items={membres.map(membre => ({
+                        text: membre.membre,
+                        id: membre.id
+                    }))}
                     select={selectMembre}/>
             </div>
         }

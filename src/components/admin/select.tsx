@@ -31,7 +31,7 @@ export default component$(({ items }: Props) => {
             class={[
                 open.value ? 'flex' : 'hidden',
                 "absolute top-full left-0 rounded border",
-                "flex-col mt-2"
+                "flex-col mt-2 text-sm"
             ]}>
             {
                 items.map((item, i) => <div 
