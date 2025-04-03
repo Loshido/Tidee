@@ -132,7 +132,7 @@ export default component$(() => {
             promotion: $promotion,
             permissions: $permissions,
             poles: $poles,
-            pass: ''
+            pass: crypto::argon2::generate($pass)
         }`, {
             ...modifications,
             permissions: modifications.permissions.map(perm => 

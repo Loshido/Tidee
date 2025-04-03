@@ -15,6 +15,7 @@ export type Membre = {
     promotion: string,
     permissions: RecordId[],
     poles: RecordId[],
+    pass?: string
 }
 export type Utilisateur = Omit<Membre, 'permissions' | 'poles' | 'id'> & {
     permissions: string[],

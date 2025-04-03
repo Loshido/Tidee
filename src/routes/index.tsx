@@ -137,7 +137,10 @@ export default component$(() => {
                     Ouvrir un ticket
                 </Lien>
                 <Lien href="/">
-                    Accéder à la documentation
+                    Documentation
+                </Lien>
+                <Lien href="/poles">
+                    Présentation des pôles
                 </Lien>
             </div>
         </Form>

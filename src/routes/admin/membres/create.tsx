@@ -24,6 +24,7 @@ export default component$(({ permissions, poles, actions }: Props) => {
         promotion: '',
         permissions: [],
         poles: [],
+        pass: ''
     })
 
     return <section class="p-5 flex flex-col gap-2">
@@ -43,6 +44,11 @@ export default component$(({ permissions, poles, actions }: Props) => {
                 type="text"
                 required={true}
                 onInput$={(_, t) => modifications.prenom = t.value}/>
+            <Entree
+                name="Mots de passe"
+                required={true}
+                type="password"
+                onInput$={(_, t) => modifications.pass = t.value}/>
             <Entree
                 name="Promotion"
                 type="text" class="w-28"

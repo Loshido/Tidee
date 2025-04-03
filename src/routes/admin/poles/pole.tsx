@@ -1,18 +1,19 @@
-import { $, component$, type JSXOutput, type PropsOf, type QRL, useContext, useSignal, useStore } from "@builder.io/qwik";
+import { $, component$, type JSXOutput, type PropsOf, type QRL, Slot, useContext, useSignal, useStore } from "@builder.io/qwik";
 import type { SerializablePoles } from "./types"
 import { connectionCtx, permissionsCtx } from "~/routes/layout";
 import { polesCtx } from ".";
 import { RecordId } from "surrealdb";
 import Lists from "~/components/admin/lists";
+import { LuX } from "@qwikest/icons/lucide";
 
 type Props = {
     pole: SerializablePoles,
-    save: QRL<(id: string, modification: Partial<Omit<SerializablePoles, 'id'>>) => Promise<void>>
+    save: QRL<(id: string, modification: Partial<Omit<SerializablePoles, 'id'>>) => Promise<boolean>>
 }
 
 type Menu = null | 'permissions' | 'poles' | 'responsables'
 
-const Block = ({ children, ...props }: { children: JSXOutput } & PropsOf<'div'>) => <div 
+export const Block = ({ children, ...props }: { children: JSXOutput } & PropsOf<'div'>) => <div 
     {...props}
     class={["border px-4 py-3 text-sm cursor-pointer select-none",
        "hover:bg-black/10 transition-colors",
@@ -43,6 +44,9 @@ export default component$((p: Props) => {
     const membres = useStore<{ id: string, text: string }[]>([])
 
     const insererMembre = $(async (item: { id: string, text: string }) => {
+        const input = document.getElementById('researche-responsable') as HTMLInputElement | null;
+        if(input) input.value = ''
+        membres.splice(0, membres.length)
         if(modifications.responsables === undefined) {
             modifications.responsables = [...p.pole.responsables];
         }
@@ -71,7 +75,7 @@ export default component$((p: Props) => {
                 OR 
                     string::contains(string::lowercase(prenom), $search);`,
                 {
-                    search: recherche
+                    search: recherche.toLowerCase()
                 });
 
             membres.splice(0, membres.length);
@@ -93,7 +97,7 @@ export default component$((p: Props) => {
         }, DEBOUNCE)
     })
 
-    return <div class="has-[.active]:text-black"
+    return <div class="has-[.active]:text-black has-[.active]:text-base transition-all relative"
         document:onClick$={(e, t) => {
         const target = e.target as HTMLElement | null;
         if(!t.contains(target)) {
@@ -106,13 +110,19 @@ export default component$((p: Props) => {
             modifications.responsables = undefined
         }
     }}>
-        <p class="px-4 py-3 transition-colors bg-white hover:bg-black/10 cursor-pointer select-none" 
+        <p class="px-4 py-3 transition-colors bg-white hover:bg-black/10 cursor-pointer select-none 
+            flex flex-row items-center gap-3" 
             onClick$={() => open.value = !open.value}>
             {
-                p.pole.nom
+                p.pole.nom.length === 0
+                ? <Slot/>
+                : p.pole.nom
             }
         </p>
-
+        {
+            open.value && <LuX class="absolute top-0 right-0 w-12 h-12 p-3 
+                hover:bg-red-200 cursor-pointer select-none"/>
+        }
         {
             open.value && <div>
                 <div class="active grid grid-cols-2 md:grid-cols-4
@@ -140,9 +150,10 @@ export default component$((p: Props) => {
                         Responsables
                     </Tab>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 relative">
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 relative font-light">
                     {
                         menu.value === 'permissions' && permissions.map(perm => <Block
+                            key={perm}
                             class={
                                 (
                                     (modifications.permissions === undefined && p.pole.permissions.includes(perm)) 
@@ -168,6 +179,7 @@ export default component$((p: Props) => {
                     }
                     {
                         menu.value === 'poles' && poles.map(pole => <Block
+                            key={pole.id}
                             onClick$={() => {
                                 if(modifications.poles === undefined) {
                                     modifications.poles = [...p.pole.poles];
@@ -194,6 +206,7 @@ export default component$((p: Props) => {
                                 (modifications.responsables === undefined 
                                     ? p.pole.responsables 
                                     : modifications.responsables).map(resp => <Block
+                                    key={resp.id}
                                     onClick$={() => {
                                         if(modifications.permissions === undefined) {
                                             modifications.responsables = [...p.pole.responsables];
@@ -208,7 +221,7 @@ export default component$((p: Props) => {
                                 </Block>)
                             }
                             <Block class="!p-0">
-                                <input type="text" class="w-full h-full outline-none px-4 py-3"
+                                <input id="researche-responsable" type="text" class="w-full h-full outline-none px-4 py-3"
                                     placeholder="Nouveau responsable"
                                     onInput$={search}/>
                                 <Lists
@@ -222,12 +235,31 @@ export default component$((p: Props) => {
                         menu.value === null && Object.values(modifications).some(m => m !== undefined) && <>
                             <Block class="hover:bg-green-600/25 hover:border-transparent"
                                 onClick$={async () => {
-                                    await p.save(p.pole.id, modifications);
+                                    const success = await p.save(p.pole.id, modifications);
+                                    if(success) {
+                                        if(modifications.nom) {
+                                            p.pole.nom = modifications.nom
+                                            modifications.nom = undefined;
+                                        }
+                                        if(modifications.permissions) {
+                                            p.pole.permissions = modifications.permissions;
+                                            modifications.permissions = undefined;
+                                        }
+                                        if(modifications.poles) {
+                                            p.pole.poles = modifications.poles;
+                                            modifications.poles = undefined;
+                                        }
+                                        if(modifications.responsables) {
+                                            p.pole.responsables = modifications.responsables;
+                                            modifications.responsables = undefined;
+                                        }
+                                    }
                                     open.value = false;
                                 }}>
                                 Sauvegarder
                             </Block>
                             <Block onClick$={() => {
+                                open.value = false;
                                 modifications.nom = undefined;
                                 modifications.responsables = undefined;
                                 modifications.poles = undefined;
@@ -236,6 +268,7 @@ export default component$((p: Props) => {
                                 Annuler
                             </Block>
                         </>
+                            
                     }
                 </div>
             </div>

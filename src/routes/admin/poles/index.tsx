@@ -5,6 +5,7 @@ import { connectionCtx, notificationsCtx, permissionsCtx } from "~/routes/layout
 import type { RequetePoles, SerializablePoles } from "./types";
 import Pole from "./pole";
 import { LuPlus } from "@qwikest/icons/lucide";
+import { RecordId } from "surrealdb";
 
 export const polesCtx = createContextId<SerializablePoles[]>('poles-edition');
 
@@ -60,21 +61,114 @@ export default component$(() => {
     })
 
     const save = $(async (id: string, modification: Partial<Omit<SerializablePoles, 'id'>>) => {
-        console.log(id, modification)
-        return
+        let query = `UPDATE poles SET `
+            + Object.keys(modification)
+                // @ts-ignore
+                .filter(mod => modification[mod] !== undefined)
+                .map(mod => `${mod} = $${mod}`)
+                .join(', ')
+            + ` WHERE id = $id`
+
+        const response = await conn.value?.query<[unknown[]]>(query, {
+            nom: modification.nom,
+
+            // We tell surreal that those are records
+            permissions: modification.permissions?.map(perm => new RecordId('permissions', perm)),
+            poles: modification.poles?.map(pole => new RecordId('poles', pole)),
+            responsables: modification.responsables?.map(resp => new RecordId('membres', resp.id)),
+            id: new RecordId('poles', id)
+        })
+        const succes = response !== undefined && response[0].length > 0;
+
+        notifications.push({
+            duration: 3,
+            contenu: succes 
+            ? "Modifications effectuées"
+            : "Une erreur est parvenu"
+        })
+
+        return succes
     })
 
-    return <section class="flex flex-col text-xl font-medium has-[.active]:text-black/25">
+    const create = $(async (_: string, modification: Partial<Omit<SerializablePoles, 'id'>>) => {
+        if(modification.nom === undefined) {
+            notifications.push({
+                duration: 3,
+                contenu: "Vous devez nommer le pôle!"
+            })
+            return false;
+        }
+
+        console.log(
+            `CREATE poles CONTENT {
+                nom: $nom,
+                responsables: $responsables,
+                poles: $poles,
+                permissions: $permissions,
+                meta: {
+                    boutons: [],
+                    description: '',
+                    images: [],
+                    style: ''
+                }
+            }`,
+            {
+                nom: modification.nom,
+                responsables: modification.responsables?.map(resp => new RecordId('membres', resp.id)) || [],
+                poles: modification.poles?.map(pole => new RecordId('poles', pole)) || [],
+                permissions: modification.permissions?.map(perm => new RecordId('permissions', perm)) || []
+            }
+        )
+        const response = await conn.value?.query<[unknown[]]>(
+            `CREATE poles CONTENT {
+                nom: $nom,
+                responsables: $responsables,
+                poles: $poles,
+                permissions: $permissions,
+                meta: {
+                    boutons: [],
+                    description: '',
+                    images: [],
+                    style: ''
+                }
+            }`,
+            {
+                nom: modification.nom,
+                responsables: modification.responsables?.map(resp => new RecordId('membres', resp.id)) || [],
+                poles: modification.poles?.map(pole => new RecordId('poles', pole)) || [],
+                permissions: modification.permissions?.map(perm => new RecordId('permissions', perm)) || []
+            }
+        );
+
+        const succes = response !== undefined && response[0].length > 0
+
+        notifications.push({
+            duration: 3,
+            contenu: succes
+                ? 'Pôle créé'
+                : 'Une erreur est parvenu'
+        })
+        return succes
+    })
+
+    return <section class="flex flex-col text-xl font-medium has-[.active]:text-black/25 has-[.active]:text-sm">
         {
             poles.map(pole => <Pole
                 key={pole.id}
                 pole={pole}
                 save={save}/>)
         }
-        <div class="flex flex-row gap-2 items-center cursor-pointer select-none 
-            px-4 py-3 hover:bg-black/10 transition-colors">
-            <LuPlus/>
-            Créer un pôle
-        </div>
+        <Pole
+            pole={{
+                id: "unknown",
+                nom: "",
+                responsables: [],
+                poles: [],
+                permissions: []
+            }}
+            save={create}>
+                <LuPlus/>
+                Créer un pôle
+        </Pole>
     </section>
 })
