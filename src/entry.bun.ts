@@ -27,6 +27,7 @@ const port = Number(Bun.env.PORT ?? 80);
 console.log(`Started at http://localhost:${port}/`);
 
 const app = Bun.serve({
+    reusePort: true,
     async fetch(request: Request) {
         const staticResponse = await staticFile(request);
         if (staticResponse) return staticResponse;
