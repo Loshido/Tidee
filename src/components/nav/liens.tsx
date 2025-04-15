@@ -17,7 +17,8 @@ type Lien = {
 import { LuBug, LuCalendarDays, LuClipboardCheck, 
     LuLogOut, LuMessageSquare, LuSatellite, LuSettings,
     LuSquareSlash, LuTags, LuUsers, LuFileClock, 
-    LuFileCog } from "@qwikest/icons/lucide"
+    LuFileCog, 
+    LuTestTube2} from "@qwikest/icons/lucide"
 export const liens_dash: {
     navigation: Lien[],
     other: Lien[]
@@ -153,6 +154,14 @@ export const liens_admin: {
                 <LuFileCog class="w-5 h-5 sm:w-4 sm:h-4"/>
                 Paramètres
             </>
+        },
+        {
+            path: '/admin/query/',
+            slot: <>
+                <LuTestTube2 class="w-5 h-5 sm:w-4 sm:h-4"/>
+                Requêtes
+            </>,
+            permissions: ['requetes_libres']
         }
     ],
     other: [

@@ -61,7 +61,7 @@ export default component$(() => {
     })
 
     const save = $(async (id: string, modification: Partial<Omit<SerializablePoles, 'id'>>) => {
-        let query = `UPDATE poles SET `
+        const query = `UPDATE poles SET `
             + Object.keys(modification)
                 // @ts-ignore
                 .filter(mod => modification[mod] !== undefined)

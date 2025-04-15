@@ -2,7 +2,7 @@ import { $, component$, type JSXOutput, type PropsOf, type QRL, Slot, useContext
 import type { SerializablePoles } from "./types"
 import { connectionCtx, permissionsCtx } from "~/routes/layout";
 import { polesCtx } from ".";
-import { RecordId } from "surrealdb";
+import type { RecordId } from "surrealdb";
 import Lists from "~/components/admin/lists";
 import { LuX } from "@qwikest/icons/lucide";
 
@@ -232,7 +232,7 @@ export default component$((p: Props) => {
                         </>
                     }
                     {
-                        menu.value === null && Object.values(modifications).some(m => m !== undefined) && <>
+                        menu.value === null && <>
                             <Block class="hover:bg-green-600/25 hover:border-transparent"
                                 onClick$={async () => {
                                     const success = await p.save(p.pole.id, modifications);
