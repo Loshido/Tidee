@@ -15,12 +15,7 @@ const QUERY = `SELECT
     string::html::sanitize(meta.description) as description, 
     meta.style as style, 
     meta.images as images,
-    (
-        SELECT COUNT(heures) AS nb, math::mean(heures) AS heures 
-        FROM membres 
-        WHERE $parent.id INSIDE poles
-        GROUP ALL
-    ) AS membres
+    fn::stat_par_pole(id) AS membres
 FROM poles;`;
 
 export const usePoles = routeLoader$(async (requestEvent) => {

@@ -29,15 +29,25 @@ console.log(`Started at http://localhost:${port}/`);
 const app = Bun.serve({
     reusePort: true,
     async fetch(request: Request) {
+        const url = new URL(request.url)
+
+        switch(url.pathname) {
+            case '/config':
+                return new Response(Bun.file('./data/config.json'))
+        }
+
         const staticResponse = await staticFile(request);
-        if (staticResponse) return staticResponse;
+        if (staticResponse) {
+            staticResponse.headers.set('Cache-Control', 'public, max-age=31536000, immutable')
+            return staticResponse
+        }
 
         const qwikCityResponse = await router(request);
         if (qwikCityResponse) return qwikCityResponse;
 
         return notFound(request);
     },
-    port,
+    port
 });
 
 const shutdown = async () => {

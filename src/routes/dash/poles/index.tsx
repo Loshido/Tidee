@@ -7,19 +7,15 @@ import Pole, { type PoleProps } from "~/components/poles/Pole";
 import cache from "~/lib/cache";
 import { configCtx, connectionCtx } from "~/routes/layout";
 
-export const QUERY = `SELECT 
+export const QUERY = `
+    SELECT 
     id,
     nom, 
     meta.boutons as boutons, 
     string::html::sanitize(meta.description) as description, 
     meta.style as style, 
     meta.images as images,
-    (
-        SELECT COUNT(heures) AS nb, math::mean(heures) AS heures 
-        FROM membres 
-        WHERE $parent.id INSIDE poles
-        GROUP ALL
-    ) AS membres
+    fn::stat_par_pole(id) AS membres
 FROM poles;`;
 
 export default component$(() => {

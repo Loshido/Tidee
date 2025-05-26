@@ -16,10 +16,10 @@ export interface PoleProps {
         LinkProps & { nom: string}
     )[],
     images?: string[],
-    membres: [{
+    membres: {
         heures: number,
         nb: number
-    }]
+    }
 }
 
 
@@ -47,12 +47,12 @@ export default component$((p: PoleProps & PropsOf<'div'>) => {
             <div class="flex flex-row gap-3 items-center flex-wrap"
                 title="Nombre de membres">
                 <LuUsers/>
-                { p.membres[0].nb }
+                { p.membres.nb }
             </div>
             <div class="flex flex-row gap-3 items-center flex-wrap"
                 title="Nombre d'heures par membre en moyenne">
                 <LuClock/>
-                { Math.ceil(p.membres[0].heures) }h
+                { Math.ceil(p.membres.heures) }h
             </div>
         </div>
         <div class="btn flex flex-row items-center gap-4 flex-wrap">

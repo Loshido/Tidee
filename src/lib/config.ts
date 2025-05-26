@@ -52,7 +52,7 @@ const defaultConfig: Config = {
 }
 
 export default async (): Promise<Config> => {
-    const payload = await fetch('/etc/config', {
+    const payload = await fetch('/config', {
         method: 'GET',
     })
 

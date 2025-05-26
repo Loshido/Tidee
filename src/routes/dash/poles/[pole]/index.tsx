@@ -272,10 +272,10 @@ export default component$(() => {
                 boutons={store.pole.boutons}
                 style={store.pole.style}
                 images={store.pole.images}
-                membres={[{
+                membres={{
                     nb: 0,
                     heures: 0
-                }]}/>
+                }}/>
         }
 
     </>

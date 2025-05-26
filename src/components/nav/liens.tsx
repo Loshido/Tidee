@@ -161,7 +161,7 @@ export const liens_admin: {
                 <LuTestTube2 class="w-5 h-5 sm:w-4 sm:h-4"/>
                 Requêtes
             </>,
-            permissions: ['requetes_libres']
+            permissions: ['requetes_libres']
         }
     ],
     other: [
