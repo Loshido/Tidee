@@ -31,7 +31,7 @@ export default component$((p: PoleProps & PropsOf<'div'>) => {
         "snap-center w-full h-full p-8 sm:p-24 overflow-hidden",
         "flex flex-col gap-2 sm:gap-8 flex-none relative",
         "pole-container-" + p.nom.toLowerCase(),
-        "pole-container", p.images ? 'bg-transparent' : 'bg-black',
+        "pole-container", (p.images && p.images.length >= 1) ? 'bg-transparent' : 'bg-black',
         p.class && p.class
         ]}>
         {

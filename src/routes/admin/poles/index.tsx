@@ -99,26 +99,6 @@ export default component$(() => {
             return false;
         }
 
-        console.log(
-            `CREATE poles CONTENT {
-                nom: $nom,
-                responsables: $responsables,
-                poles: $poles,
-                permissions: $permissions,
-                meta: {
-                    boutons: [],
-                    description: '',
-                    images: [],
-                    style: ''
-                }
-            }`,
-            {
-                nom: modification.nom,
-                responsables: modification.responsables?.map(resp => new RecordId('membres', resp.id)) || [],
-                poles: modification.poles?.map(pole => new RecordId('poles', pole)) || [],
-                permissions: modification.permissions?.map(perm => new RecordId('permissions', perm)) || []
-            }
-        )
         const response = await conn.value?.query<[unknown[]]>(
             `CREATE poles CONTENT {
                 nom: $nom,

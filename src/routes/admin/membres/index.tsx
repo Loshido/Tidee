@@ -185,7 +185,10 @@ export default component$(() => {
         }
 
         const params = entries
-            .map(([key]) => `${key} = $${key}`)
+            .map(([key]) => {
+                if(key === 'pass') return `pass = crypto::argon2::generate($${key})`
+                return `${key} = $${key}`
+            })
             .join(', ');
 
         const query = `UPDATE membres SET ` + params + ` WHERE id = $id`;

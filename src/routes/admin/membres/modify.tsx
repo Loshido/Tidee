@@ -36,6 +36,11 @@ export default component$(({ utilisateur, permissions, poles, actions }: Props) 
                 onInput$={(_, t) => modifications.prenom = t.value}
                 value={utilisateur.prenom}/>
             <Entree
+                name="Nouveau mots de passe"
+                type="password"
+                onInput$={(_, t) => modifications.pass = t.value}
+                value={''}/>
+            <Entree
                 name="Promotion"
                 type="text" class="w-28"
                 onInput$={(_, t) => modifications.promotion = t.value}
