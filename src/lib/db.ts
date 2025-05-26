@@ -1,7 +1,7 @@
 import { isDev, NoSerialize } from "@builder.io/qwik";
 import Surreal from "surrealdb";
 
-const URL = isDev ? 'ws://localhost:8000' :  'https://tide-db.loshido.me';
+const URL = isDev ? 'ws://localhost:8000' :  'https://tide.isenengineering.fr/db';
 const NS = 'tidee';
 const DB = 'data';
 

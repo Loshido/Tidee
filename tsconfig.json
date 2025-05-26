@@ -21,5 +21,12 @@
     }
   },
   "files": ["./.eslintrc.cjs"],
-  "include": ["src", "./*.d.ts", "./*.config.ts", "./types/*.d.ts", "public/test.ts", "setup"]
+  "include": [
+    "src",
+    "./*.d.ts",
+    "./*.config.ts",
+    "./types/*.d.ts",
+    "public/test.ts",
+    "setup"
+  ]
 }
