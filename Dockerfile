@@ -3,7 +3,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN echo "{}" >> ./data/config.json
+RUN mkdir data && echo "{}" >> ./data/config.json
 RUN --mount=type=cache,target=./cache \
     npm install
 RUN npm run build
