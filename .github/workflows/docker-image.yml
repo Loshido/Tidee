@@ -9,5 +9,9 @@ jobs:
         runs-on: ubuntu-latest
         steps:
          - uses: actions/checkout@v4
-         - name: Build the Docker image
-           run: docker build . --file Dockerfile --tag loshido/tidee:latest
+         - name: Build
+           uses: docker/build-push-action@v6
+           with:
+                tags: loshido/tidee:production
+                secrets: |
+                    "github_token=${{ secrets.HUB_TOKEN }}"
