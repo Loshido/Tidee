@@ -33,7 +33,7 @@ export default component$(() => {
     }
 
     return <section 
-        class="w-svw h-svh sm:grid overflow-hidden"
+        class="w-dvw h-dvh sm:grid overflow-hidden"
         style="grid-template-columns: auto 1fr">
         <div class="sm:hidden p-2 flex flex-row gap-3 border-b items-center">
             <div class="p-2 hover:bg-black hover:bg-opacity-10 rounded

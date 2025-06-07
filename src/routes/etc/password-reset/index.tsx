@@ -3,7 +3,7 @@ import { DocumentHead, Link } from "@builder.io/qwik-city";
 
 import Cat from "~/assets/cat.png?jsx"
 export default component$(() => {
-    return <section class="w-svw h-svh">
+    return <section class="w-dvw h-dvh">
         <Link href="/" class="absolute top-4 left-4 font-light
         hover:text-black hover:text-opacity-25 transition-colors">
             Revenir en arrière

@@ -2,7 +2,7 @@
     border-top: 1px solid #0001;
 
     display: grid;
-    grid-template-columns: 200px 200px 100px 40px 40px;
+    grid-template-columns: 20dvw 20dvw 15dvw 40px 40px;
 }
 
 .appel .ligne > * {
@@ -19,6 +19,7 @@
 .appel .ligne.tete > *{
     cursor: pointer;
     user-select: none;
+    line-height: 1;
 }
 
 .appel .ligne .cube{
