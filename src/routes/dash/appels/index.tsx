@@ -273,7 +273,7 @@ export default component$(() => {
         }
     })
 
-    return <section>
+    return <>
         <div class="text-2xl font-medium p-5 sm:p-10
             flex flex-row flex-wrap gap-x-2 items-center">
             Appel du pôle 
@@ -288,7 +288,7 @@ export default component$(() => {
         </div>
         {
             state.pole
-            ? <div class="appel w-full flex flex-col gap-0">
+            ? <div class="appel w-full flex flex-col gap-0 lg:text-xl lg:leading-6">
                 <div class="ligne tete font-semibold">
                     <Entete
                         trie={{
@@ -347,7 +347,7 @@ export default component$(() => {
                         /> )
                 }
             </div>
-            : <div class="w-full h-full sm:px-32 md:px-48 lg:px-64 xl:px-96 flex flex-row gap-2 items-center justify-center min-h-96 font-medium">
+            : <div class="w-full min-h-96 sm:px-32 md:px-48 lg:px-64 xl:px-96 flex flex-row gap-2 items-center justify-center min-h-96 font-medium">
                 <LuTag/>
                 <p class="w-2/3 sm:w-auto">
                     Vous devez choisir le pôle pour lequel vous voulez faire l'appel!
@@ -375,7 +375,7 @@ export default component$(() => {
             }
             
         </div>
-    </section>
+    </>
 })
 
 export const head: DocumentHead = {

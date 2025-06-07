@@ -89,7 +89,7 @@ export default component$(() => {
     })
 
     return <section class="flex md:grid flex-col md:items-center gap-2 sm:gap-10 
-        p-5 md:p-10 w-svw h-svh
+        p-5 md:p-10 w-dvw h-dvh
         md:grid-cols-2 md:grid-rows-1">
         <FlowField/> 
         <Form
