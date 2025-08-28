@@ -1,8 +1,8 @@
 import { component$ } from "@builder.io/qwik";
 
 export default component$(() => {
-    return <section class="p-5 flex flex-col gap-4">
-        <h1 class="text-2xl">
+    return <section class="flex flex-col gap-4 w-full h-full p-32 bg-orange-50">
+        {/* <h1 class="text-2xl">
             Paramètres
         </h1>
 
@@ -11,6 +11,14 @@ export default component$(() => {
             <li>Permettre de gérer la durée du cache de chaque requête</li>
             <li>Gérer les couleurs primaire de l'application</li>
             <li>Possibilité modifier le css de l'application</li>
-        </ol>
+        </ol> */}
+        <div class="w-fit">
+            <h2 class="text-4xl font-bold text-orange-500">
+                🚧 Développement suspendu,
+            </h2>
+            <p class="text-xl text-orange-400/50">
+                vous pouvez contactez le pôle serveur pour faire une demande
+            </p>
+        </div>
     </section>
 })
