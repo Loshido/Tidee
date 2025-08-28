@@ -40,7 +40,7 @@ export default component$((p: PoleProps & PropsOf<'div'>) => {
         <h1 class="text-white text-4xl sm:text-6xl md:text-8xl font-black uppercase">
             { p.nom }
         </h1>
-        <p 
+        <div 
             class="text-white text-opacity-50 font-light text-lg sm:text-xl sm:w-4/5 md:w-3/5" 
             dangerouslySetInnerHTML={p.description}/>
         <div class="stats flex flex-row items-center gap-5 flex-wrap text-white">

@@ -12,7 +12,7 @@ const QUERY = `SELECT
     id,
     nom, 
     meta.boutons as boutons, 
-    string::html::sanitize(meta.description) as description, 
+    meta.description as description, 
     meta.style as style, 
     meta.images as images,
     fn::stat_par_pole(id) AS membres
