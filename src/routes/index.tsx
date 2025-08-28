@@ -68,13 +68,13 @@ export default component$(() => {
             // $session.rd fait référence à l'id de l'utilisateur (rd: RecordId)
             permissions.splice(0, permissions.length)
             const perms = await conn.value!.query<[RecordId[]]>("fn::permissions($session.rd)");
-            console.log(perms)
             permissions.push(...perms[0].map(perm => perm.id.toString()))
 
             notifications.push({
                 contenu: 'Connecté(e) pour 2 semaines 🌊',
                 duration: 3
             })
+
             // On stocke le token pour pouvoir le réutiliser dans les 4h
             localStorage.setItem('token', token);
             nav('/dash')

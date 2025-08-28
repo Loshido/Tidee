@@ -67,11 +67,11 @@ export default component$(() => {
                 // @ts-ignore
                 config[key] = conf[key]
             })
-
+            
             const connection = await db();
             // Impossible de serialiser la class Surreal
             database.value = noSerialize(connection);
-
+            
             console.info("Connexion avec la base de données établit")
             
             // Le jeton qui sert à l'utilisateur de s'authentifier

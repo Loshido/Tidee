@@ -32,7 +32,7 @@ const app = Bun.serve({
         const url = new URL(request.url)
 
         switch(url.pathname) {
-            case '/config':
+            case '/config/':
                 return new Response(Bun.file('./data/config.json'))
         }
 

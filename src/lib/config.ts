@@ -52,11 +52,11 @@ const defaultConfig: Config = {
 }
 
 export default async (): Promise<Config> => {
-    const payload = await fetch('/config', {
+    const payload = await fetch('/config/', {
         method: 'GET',
     })
 
-    if(payload.status == 200) {
+    if(payload.status == 200 && payload.headers.get('content-type') === 'application/json') {
         try {
             const config = await payload.json();
             return defu(config, defaultConfig);
