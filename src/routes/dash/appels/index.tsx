@@ -159,7 +159,7 @@ export default component$(() => {
     useTask$(() => {
         // Toutes les appels d'une semaine seront stockés au premier jour de la semaine,
         // pour réduire les logs
-        const d = Date.now() - (new Date().getDay() - 1) * 24 * 60 * 60 * 1000
+        const d = Date.now() - (new Date().getDay() + 3) * 24 * 60 * 60 * 1000
         const date = new Date(d);
         state.date = date;
     })
