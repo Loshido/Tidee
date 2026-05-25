@@ -1,10 +1,9 @@
-FROM oven/bun:alpine AS build
+FROM oven/bun:debian AS build
 WORKDIR /app
 
 COPY . .
 
-RUN --mount=type=cache,target=./cache \
-bun install
+RUN bun install
 RUN bun run build
 
 FROM oven/bun:alpine AS production
@@ -16,4 +15,4 @@ COPY --from=build /app/dist dist
 
 ENV PORT=80
 EXPOSE 80
-ENTRYPOINT [ "bun", "server/entry.bun.js" ]
+CMD ["bun", "server/entry.bun.js"]
